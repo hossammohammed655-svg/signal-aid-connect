@@ -1,14 +1,15 @@
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/useLanguage";
+import logoAsset from "@/assets/main-logo.png.asset.json";
 
 export function BrandMark({ className }: { className?: string }) {
   return (
-    <div className={cn("relative size-16 rounded-2xl bg-gradient-brand flex items-center justify-center shadow-glow", className)}>
-      <svg viewBox="0 0 48 48" className="size-9 text-primary-foreground" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 26h7l3-8 5 16 4-12 3 6h18" />
-        <circle cx="38" cy="14" r="3" fill="currentColor" stroke="none" className="animate-heartbeat origin-center" />
-      </svg>
-      <span className="absolute -inset-1 rounded-2xl border border-white/20 animate-pulse-ring pointer-events-none" />
+    <div className={cn("relative size-16 flex items-center justify-center", className)}>
+      <img
+        src={logoAsset.url}
+        alt="Signs of Life logo"
+        className="size-full object-contain drop-shadow-lg"
+      />
     </div>
   );
 }
@@ -22,5 +23,15 @@ export function BrandName({ className, size = "md" }: { className?: string; size
         {t("splash.title")}
       </h1>
     </div>
+  );
+}
+
+export function BrandLogoFull({ className }: { className?: string }) {
+  return (
+    <img
+      src={logoAsset.url}
+      alt="إشارة حياة · Sign of Life"
+      className={cn("object-contain", className)}
+    />
   );
 }
