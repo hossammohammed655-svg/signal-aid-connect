@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useLanguage } from "@/hooks/useLanguage";
 import { ArrowLeft, Camera, Mic, RefreshCw, Languages, Volume2, Hand } from "lucide-react";
 
 export const Route = createFileRoute("/translate")({
@@ -7,6 +8,7 @@ export const Route = createFileRoute("/translate")({
 });
 
 function Translate() {
+  const { t } = useLanguage();
   return (
     <div className="min-h-dvh w-full flex justify-center bg-black">
       <div className="relative w-full max-w-[440px] min-h-dvh bg-neutral-950 text-white overflow-hidden flex flex-col">
@@ -14,13 +16,13 @@ function Translate() {
         <div className="absolute inset-0 opacity-40" style={{ backgroundImage: "radial-gradient(circle at 30% 30%, rgba(57,139,196,0.4), transparent 50%), radial-gradient(circle at 80% 70%, rgba(54,86,187,0.4), transparent 50%)" }} />
 
         <header className="relative z-10 flex items-center justify-between px-5 pt-12 pb-4">
-          <Link to="/home" className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label="Back">
+          <Link to="/home" className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label={t("common.back")}>
             <ArrowLeft className="size-5" />
           </Link>
           <div className="glass border border-white/20 rounded-full px-3 py-1.5 flex items-center gap-2 text-xs">
-            <span className="size-2 rounded-full bg-success animate-pulse" /> Live · AI translating
+            <span className="size-2 rounded-full bg-success animate-pulse" /> {t("translate.live")}
           </div>
-          <button className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label="Switch camera">
+          <button className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label={t("translate.switchCam")}>
             <RefreshCw className="size-5" />
           </button>
         </header>
@@ -32,15 +34,14 @@ function Translate() {
             </div>
             <div className="absolute inset-4 rounded-[2rem] border-2 border-dashed border-teal/60" />
             <div className="absolute top-4 left-4 right-4 flex justify-between text-[10px] uppercase tracking-widest text-white/70">
-              <span>Hands detected · 2</span>
-              <span>ASL · Arabic SL</span>
+              <span>{t("translate.hands")}</span>
+              <span>{t("translate.langs")}</span>
             </div>
             <div className="absolute bottom-4 left-4 right-4 glass border border-white/20 rounded-2xl p-4">
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/70 mb-1">
-                <Languages className="size-3" /> Live subtitles
+                <Languages className="size-3" /> {t("translate.subtitles")}
               </div>
-              <p className="text-lg font-semibold leading-snug">"I need my evening medication, please."</p>
-              <p dir="rtl" lang="ar" className="text-sm text-white/80 mt-1">«أحتاج إلى دوائي المسائي من فضلك.»</p>
+              <p className="text-lg font-semibold leading-snug">"{t("translate.demoEn")}"</p>
             </div>
           </div>
         </div>
@@ -57,7 +58,7 @@ function Translate() {
               <Mic className="size-6" />
             </button>
           </div>
-          <p className="text-center text-xs text-white/60 mt-4">Sign naturally · AI translates in real time</p>
+          <p className="text-center text-xs text-white/60 mt-4">{t("translate.hint")}</p>
         </div>
       </div>
     </div>
