@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function BrandMark({ className }: { className?: string }) {
   return (
@@ -13,11 +14,13 @@ export function BrandMark({ className }: { className?: string }) {
 }
 
 export function BrandName({ className, size = "md" }: { className?: string; size?: "sm" | "md" | "lg" }) {
+  const { t } = useLanguage();
   const sizes = { sm: "text-lg", md: "text-2xl", lg: "text-4xl" } as const;
   return (
     <div className={cn("flex flex-col items-center gap-0.5", className)}>
-      <h1 dir="rtl" lang="ar" className={cn("font-bold tracking-tight", sizes[size])}>إشارة حياة</h1>
-      <p className={cn("uppercase tracking-[0.25em] text-muted-foreground", size === "lg" ? "text-xs" : "text-[10px]")}>Signs of Life</p>
+      <h1 className={cn("font-bold tracking-tight", sizes[size])}>
+        {t("splash.title")}
+      </h1>
     </div>
   );
 }

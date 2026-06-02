@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { BrandMark, BrandName } from "@/components/BrandLogo";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,9 +15,11 @@ export const Route = createFileRoute("/")({
 
 function Splash() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
   useEffect(() => {
-    const t = setTimeout(() => navigate({ to: "/login" }), 2400);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => navigate({ to: "/login" }), 2400);
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
@@ -29,11 +32,10 @@ function Splash() {
         <div className="relative z-10 flex flex-col items-center gap-6 animate-float">
           <BrandMark className="size-24" />
           <div className="text-center">
-            <h1 dir="rtl" lang="ar" className="text-5xl font-bold tracking-tight">إشارة حياة</h1>
-            <p className="mt-2 uppercase tracking-[0.35em] text-xs text-primary-foreground/80">Signs of Life</p>
+            <h1 className="text-5xl font-bold tracking-tight">{t("splash.title")}</h1>
           </div>
           <p className="max-w-[260px] text-center text-sm text-primary-foreground/80 text-balance">
-            Bridging silence and care through AI-powered healthcare communication.
+            {t("splash.subtitle")}
           </p>
         </div>
 
