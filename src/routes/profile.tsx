@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Bell, Globe, Moon, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
@@ -7,39 +8,34 @@ export const Route = createFileRoute("/profile")({
   component: Profile,
 });
 
-const stats = [
-  { l: "Sessions", v: "24" },
-  { l: "Reports", v: "12" },
-  { l: "Saved", v: "8" },
-];
-
-const groups = [
-  {
-    title: "Care",
-    items: [
-      { icon: HeartPulse, label: "Medical profile", sub: "Conditions · Allergies" },
-      { icon: ShieldCheck, label: "Emergency contacts", sub: "3 people" },
-      { icon: Accessibility, label: "Accessibility", sub: "Sign language · Captions" },
-    ],
-  },
-  {
-    title: "Preferences",
-    items: [
-      { icon: Globe, label: "Language", sub: "English · العربية" },
-      { icon: Moon, label: "Appearance", sub: "System" },
-      { icon: Bell, label: "Notifications", sub: "On" },
-    ],
-  },
-];
-
 function Profile() {
+  const { t, lang, setLang, isRTL } = useLanguage();
+
+  const stats = [
+    { l: t("profile.sessions"), v: "24" },
+    { l: t("profile.reports"), v: "12" },
+    { l: t("profile.saved"), v: "8" },
+  ];
+
+  const careItems = [
+    { icon: HeartPulse, label: t("profile.medical"), sub: t("profile.conditions") },
+    { icon: ShieldCheck, label: t("profile.emergency"), sub: t("profile.3people") },
+    { icon: Accessibility, label: t("profile.accessibility"), sub: t("profile.signCaptions") },
+  ];
+
+  const prefItems = [
+    { icon: Globe, label: t("profile.language"), sub: isRTL ? t("profile.arabic") : t("profile.english"), onClick: () => setLang(isRTL ? "en" : "ar") },
+    { icon: Moon, label: t("profile.appearance"), sub: t("profile.system") },
+    { icon: Bell, label: t("profile.notifications"), sub: t("profile.on") },
+  ];
+
   return (
     <MobileShell>
       <div className="bg-gradient-brand text-primary-foreground rounded-b-[2rem] px-5 pt-12 pb-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-aurora opacity-40" />
         <div className="relative flex items-center justify-between">
-          <h1 className="text-xl font-bold">Profile</h1>
-          <Link to="/login" className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label="Settings"><Settings className="size-5" /></Link>
+          <h1 className="text-xl font-bold">{t("profile.title")}</h1>
+          <Link to="/login" className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label={t("profile.settings")}><Settings className="size-5" /></Link>
         </div>
         <div className="relative mt-5 flex items-center gap-4">
           <div className="relative">
@@ -47,9 +43,9 @@ function Profile() {
             <span className="absolute -bottom-1 -right-1 size-6 rounded-full bg-success border-2 border-background flex items-center justify-center text-[10px] font-bold text-success-foreground">✓</span>
           </div>
           <div>
-            <p className="text-xl font-bold">Layla Hassan</p>
-            <p className="text-sm text-primary-foreground/80">layla@signsoflife.app</p>
-            <p dir="rtl" lang="ar" className="text-xs text-primary-foreground/70 mt-0.5">عضو منذ 2024</p>
+            <p className="text-xl font-bold">{t("profile.name")}</p>
+            <p className="text-sm text-primary-foreground/80">{t("profile.email")}</p>
+            <p className="text-xs text-primary-foreground/70 mt-0.5">{t("profile.memberSince")}</p>
           </div>
         </div>
         <div className="relative mt-5 grid grid-cols-3 gap-2">
@@ -63,28 +59,44 @@ function Profile() {
       </div>
 
       <section className="px-5 mt-6 space-y-6">
-        {groups.map((g) => (
-          <div key={g.title}>
-            <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{g.title}</h2>
-            <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
-              {g.items.map(({ icon: Icon, label, sub }, i) => (
-                <button key={label} className={`w-full flex items-center gap-3 p-4 text-left ${i > 0 ? "border-t border-border" : ""}`}>
-                  <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
-                    <Icon className="size-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold">{label}</p>
-                    <p className="text-xs text-muted-foreground">{sub}</p>
-                  </div>
-                  <ChevronRight className="size-4 text-muted-foreground" />
-                </button>
-              ))}
-            </div>
+        <div>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{t("profile.care")}</h2>
+          <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
+            {careItems.map(({ icon: Icon, label, sub }, i) => (
+              <button key={label} className={`w-full flex items-center gap-3 p-4 text-left ${i > 0 ? "border-t border-border" : ""}`}>
+                <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
+                  <Icon className="size-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">{label}</p>
+                  <p className="text-xs text-muted-foreground">{sub}</p>
+                </div>
+                <ChevronRight className="size-4 text-muted-foreground" />
+              </button>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{t("profile.preferences")}</h2>
+          <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
+            {prefItems.map(({ icon: Icon, label, sub, onClick }, i) => (
+              <button key={label} onClick={onClick} className={`w-full flex items-center gap-3 p-4 text-left ${i > 0 ? "border-t border-border" : ""}`}>
+                <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
+                  <Icon className="size-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">{label}</p>
+                  <p className="text-xs text-muted-foreground">{sub}</p>
+                </div>
+                <ChevronRight className="size-4 text-muted-foreground" />
+              </button>
+            ))}
+          </div>
+        </div>
 
         <button className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 text-destructive font-semibold border border-destructive/30 bg-destructive/5">
-          <LogOut className="size-4" /> Sign out
+          <LogOut className="size-4" /> {t("profile.signout")}
         </button>
       </section>
     </MobileShell>

@@ -105,9 +105,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var l=localStorage.getItem('lang')||'en';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}catch(e){}})();` }} />
       </head>
       <body>
         {children}
