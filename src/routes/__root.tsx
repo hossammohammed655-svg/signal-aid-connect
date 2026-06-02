@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Sign Of Life" },
+      { name: "description", content: "Life Signal Connect is an AI-powered app for accessible patient-pharmacist communication and healthcare support." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Sign Of Life" },
+      { property: "og:description", content: "Life Signal Connect is an AI-powered app for accessible patient-pharmacist communication and healthcare support." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Sign Of Life" },
+      { name: "twitter:description", content: "Life Signal Connect is an AI-powered app for accessible patient-pharmacist communication and healthcare support." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f4bc717b-bb5b-452a-a732-4b14900f9ffc/id-preview-5f0c8b3c--9ac488a7-67e1-4d80-b662-95fc771008ac.lovable.app-1780403129332.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f4bc717b-bb5b-452a-a732-4b14900f9ffc/id-preview-5f0c8b3c--9ac488a7-67e1-4d80-b662-95fc771008ac.lovable.app-1780403129332.png" },
     ],
     links: [
       {
