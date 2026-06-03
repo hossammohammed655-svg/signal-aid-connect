@@ -14,6 +14,7 @@ import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SymptomsRouteImport } from './routes/symptoms'
 import { Route as SosRouteImport } from './routes/sos'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
@@ -43,6 +44,11 @@ const SosRoute = SosRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/sos': typeof SosRoute
   '/symptoms': typeof SymptomsRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/sos': typeof SosRoute
   '/symptoms': typeof SymptomsRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
   '/sos': typeof SosRoute
   '/symptoms': typeof SymptomsRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/profile'
+    | '/register'
     | '/reports'
     | '/sos'
     | '/symptoms'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/profile'
+    | '/register'
     | '/reports'
     | '/sos'
     | '/symptoms'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/profile'
+    | '/register'
     | '/reports'
     | '/sos'
     | '/symptoms'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
   SosRoute: typeof SosRoute
   SymptomsRoute: typeof SymptomsRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
   SosRoute: SosRoute,
   SymptomsRoute: SymptomsRoute,
@@ -250,3 +271,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
