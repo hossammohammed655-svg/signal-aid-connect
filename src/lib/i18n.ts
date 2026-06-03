@@ -13,6 +13,10 @@ const en: Record<string, string> = {
   "login.or": "or continue with",
   "login.new": "New here?",
   "login.create": "Create account",
+  "login.err.required": "Please enter your email and password.",
+  "login.err.invalid": "Invalid email or password.",
+  "login.err.generic": "Sign in failed. Please try again.",
+  "login.signingIn": "Signing in...",
 
   "register.title": "Create your account",
   "register.subtitle": "Join Signs of Life to access AI-powered healthcare support.",
@@ -238,6 +242,10 @@ const ar: Record<string, string> = {
   "login.or": "أو تابع باستخدام",
   "login.new": "جديد هنا؟",
   "login.create": "إنشاء حساب",
+  "login.err.required": "يرجى إدخال البريد الإلكتروني وكلمة المرور.",
+  "login.err.invalid": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "login.err.generic": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+  "login.signingIn": "جاري تسجيل الدخول...",
 
   "register.title": "أنشئ حسابك",
   "register.subtitle": "انضم إلى إشارة حياة للوصول إلى الدعم الصحي المدعوم بالذكاء الاصطناعي.",

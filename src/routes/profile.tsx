@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Bell, Globe, Moon, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
@@ -10,6 +12,13 @@ export const Route = createFileRoute("/profile")({
 
 function Profile() {
   const { t, lang, setLang, isRTL } = useLanguage();
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/login", replace: true });
+  }
 
   const stats = [
     { l: t("profile.sessions"), v: "24" },
@@ -43,9 +52,9 @@ function Profile() {
             <span className="absolute -bottom-1 -right-1 size-6 rounded-full bg-success border-2 border-background flex items-center justify-center text-[10px] font-bold text-success-foreground">✓</span>
           </div>
           <div>
-            <p className="text-xl font-bold">{t("profile.name")}</p>
-            <p className="text-sm text-primary-foreground/80">{t("profile.email")}</p>
-            <p className="text-xs text-primary-foreground/70 mt-0.5">{t("profile.memberSince")}</p>
+            <p className="text-xl font-bold">{profile?.full_name || t("profile.name")}</p>
+            <p className="text-sm text-primary-foreground/80">{user?.email || t("profile.email")}</p>
+            <p className="text-xs text-primary-foreground/70 mt-0.5">{profile?.user_type === "pharmacist" ? "Pharmacist" : "Patient"}</p>
           </div>
         </div>
         <div className="relative mt-5 grid grid-cols-3 gap-2">
@@ -95,7 +104,7 @@ function Profile() {
           </div>
         </div>
 
-        <button className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 text-destructive font-semibold border border-destructive/30 bg-destructive/5">
+        <button onClick={handleSignOut} className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 text-destructive font-semibold border border-destructive/30 bg-destructive/5">
           <LogOut className="size-4" /> {t("profile.signout")}
         </button>
       </section>

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAuth } from "@/hooks/useAuth";
 import { Hand, Siren, Stethoscope, Pill, Video, FileText, Bell, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
@@ -17,6 +18,8 @@ const features = [
 
 function Home() {
   const { t } = useLanguage();
+  const { profile, user } = useAuth();
+  const displayName = profile?.full_name || user?.email?.split("@")[0] || t("home.name");
   return (
     <MobileShell>
       <div className="bg-gradient-brand text-primary-foreground rounded-b-[2rem] px-5 pt-12 pb-8 relative overflow-hidden">
@@ -24,7 +27,7 @@ function Home() {
         <div className="relative z-10 flex items-start justify-between">
           <div>
             <p className="text-sm text-primary-foreground/80">{t("home.greeting")}</p>
-            <h1 className="text-2xl font-bold mt-0.5">{t("home.name")}</h1>
+            <h1 className="text-2xl font-bold mt-0.5">{displayName}</h1>
             <p className="text-sm text-primary-foreground/80 mt-1">{t("home.help")}</p>
           </div>
           <button className="relative size-11 rounded-full glass border border-white/20 flex items-center justify-center" aria-label="Notifications">
