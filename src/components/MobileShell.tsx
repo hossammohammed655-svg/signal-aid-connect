@@ -1,8 +1,9 @@
-import { ReactNode } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { ReactNode, useEffect } from "react";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { Home, Activity, Video, FileText, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAuth } from "@/hooks/useAuth";
 
 const tabs = [
   { to: "/home", labelKey: "nav.home", icon: Home },
@@ -15,6 +16,24 @@ const tabs = [
 export function MobileShell({ children, hideNav = false }: { children: ReactNode; hideNav?: boolean }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useLanguage();
+  const { session, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !session) {
+      navigate({ to: "/login", replace: true });
+    }
+  }, [loading, session, navigate]);
+
+  if (loading || !session) {
+    return (
+      <div className="min-h-dvh w-full flex items-center justify-center bg-background">
+        <div className="size-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+
 
   return (
     <div className="min-h-dvh w-full flex justify-center bg-muted/40">
