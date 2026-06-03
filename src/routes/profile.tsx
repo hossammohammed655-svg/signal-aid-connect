@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { MobileShell } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Bell, Globe, Moon, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
@@ -10,6 +12,13 @@ export const Route = createFileRoute("/profile")({
 
 function Profile() {
   const { t, lang, setLang, isRTL } = useLanguage();
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/login", replace: true });
+  }
 
   const stats = [
     { l: t("profile.sessions"), v: "24" },
