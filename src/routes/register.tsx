@@ -96,7 +96,7 @@ function Register() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder={t("register.fullName")}
-              className="h-13 ps-11 rounded-2xl bg-secondary border-0"
+              className="h-14 ps-11 rounded-2xl bg-secondary border-0"
             />
           </FieldIcon>
 
@@ -106,7 +106,7 @@ function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t("register.email")}
-              className="h-13 ps-11 rounded-2xl bg-secondary border-0"
+              className="h-14 ps-11 rounded-2xl bg-secondary border-0"
             />
           </FieldIcon>
 
@@ -116,7 +116,7 @@ function Register() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder={t("register.phone")}
-              className="h-13 ps-11 rounded-2xl bg-secondary border-0"
+              className="h-14 ps-11 rounded-2xl bg-secondary border-0"
             />
           </FieldIcon>
 
@@ -126,7 +126,7 @@ function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t("register.password")}
-              className="h-13 ps-11 rounded-2xl bg-secondary border-0"
+              className="h-14 ps-11 rounded-2xl bg-secondary border-0"
             />
           </FieldIcon>
 
@@ -136,13 +136,13 @@ function Register() {
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               placeholder={t("register.confirmPassword")}
-              className="h-13 ps-11 rounded-2xl bg-secondary border-0"
+              className="h-14 ps-11 rounded-2xl bg-secondary border-0"
             />
           </FieldIcon>
 
           <FieldIcon icon={<Stethoscope className="size-4" />}>
             <Select value={userType} onValueChange={(v) => setUserType(v as "patient" | "pharmacist")}>
-              <SelectTrigger className="h-13 ps-11 rounded-2xl bg-secondary border-0">
+              <SelectTrigger className="h-14 ps-11 rounded-2xl bg-secondary border-0">
                 <SelectValue placeholder={t("register.userType")} />
               </SelectTrigger>
               <SelectContent>
