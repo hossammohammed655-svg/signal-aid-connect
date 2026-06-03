@@ -13,11 +13,13 @@ import { Route as VideosRouteImport } from './routes/videos'
 import { Route as TranslateRouteImport } from './routes/translate'
 import { Route as SymptomsRouteImport } from './routes/symptoms'
 import { Route as SosRouteImport } from './routes/sos'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DrugsRouteImport } from './routes/drugs'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -39,6 +41,11 @@ const SymptomsRoute = SymptomsRouteImport.update({
 const SosRoute = SosRouteImport.update({
   id: '/sos',
   path: '/sos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportsRoute = ReportsRouteImport.update({
@@ -66,6 +73,11 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DrugsRoute = DrugsRouteImport.update({
   id: '/drugs',
   path: '/drugs',
@@ -80,11 +92,13 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/drugs': typeof DrugsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sos': typeof SosRoute
   '/symptoms': typeof SymptomsRoute
   '/translate': typeof TranslateRoute
@@ -93,11 +107,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/drugs': typeof DrugsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sos': typeof SosRoute
   '/symptoms': typeof SymptomsRoute
   '/translate': typeof TranslateRoute
@@ -107,11 +123,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/drugs': typeof DrugsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/reports': typeof ReportsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sos': typeof SosRoute
   '/symptoms': typeof SymptomsRoute
   '/translate': typeof TranslateRoute
@@ -122,11 +140,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/drugs'
+    | '/forgot-password'
     | '/home'
     | '/login'
     | '/profile'
     | '/register'
     | '/reports'
+    | '/reset-password'
     | '/sos'
     | '/symptoms'
     | '/translate'
@@ -135,11 +155,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/drugs'
+    | '/forgot-password'
     | '/home'
     | '/login'
     | '/profile'
     | '/register'
     | '/reports'
+    | '/reset-password'
     | '/sos'
     | '/symptoms'
     | '/translate'
@@ -148,11 +170,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/drugs'
+    | '/forgot-password'
     | '/home'
     | '/login'
     | '/profile'
     | '/register'
     | '/reports'
+    | '/reset-password'
     | '/sos'
     | '/symptoms'
     | '/translate'
@@ -162,11 +186,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DrugsRoute: typeof DrugsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
   ReportsRoute: typeof ReportsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SosRoute: typeof SosRoute
   SymptomsRoute: typeof SymptomsRoute
   TranslateRoute: typeof TranslateRoute
@@ -201,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/sos'
       fullPath: '/sos'
       preLoaderRoute: typeof SosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports': {
@@ -238,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/drugs': {
       id: '/drugs'
       path: '/drugs'
@@ -258,11 +298,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DrugsRoute: DrugsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
   ReportsRoute: ReportsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SosRoute: SosRoute,
   SymptomsRoute: SymptomsRoute,
   TranslateRoute: TranslateRoute,
@@ -271,3 +313,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
