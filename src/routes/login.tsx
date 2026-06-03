@@ -37,7 +37,7 @@ function Login() {
             </div>
           </div>
 
-          <button className="text-xs text-primary self-end font-medium">{t("login.forgot")}</button>
+          <Link to="/forgot-password" className="text-xs text-primary self-end font-medium">{t("login.forgot")}</Link>
 
           <Button asChild className="h-14 rounded-2xl bg-gradient-brand text-primary-foreground shadow-soft text-base font-semibold">
             <Link to="/home">{t("login.signin")}</Link>
