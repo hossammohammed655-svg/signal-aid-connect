@@ -60,7 +60,7 @@ function Login() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-auto">
-            {t("login.new")} <Link to="/home" className="text-primary font-semibold">{t("login.create")}</Link>
+            {t("login.new")} <Link to="/register" className="text-primary font-semibold">{t("login.create")}</Link>
           </p>
         </div>
       </div>
