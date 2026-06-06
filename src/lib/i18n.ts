@@ -258,6 +258,24 @@ const en: Record<string, string> = {
   "sym.s.throat": "Sore throat",
   "sym.s.cough": "Cough",
   "sym.s.vision": "Blurred vision",
+
+  "drugs2.title": "Drug & Food Interactions",
+  "drugs2.subtitle": "Check what to avoid and the best time to take your medication.",
+  "drugs2.search": "Search a medication...",
+  "drugs2.suggestions": "Common medications",
+  "drugs2.check": "Check Interactions",
+  "drugs2.checking": "Analyzing interactions...",
+  "drugs2.timing": "Best time to take it",
+  "drugs2.foodInter": "Food interactions",
+  "drugs2.drugInter": "Drug interactions",
+  "drugs2.level.DANGER": "Avoid",
+  "drugs2.level.CAUTION": "Use caution",
+  "drugs2.level.SAFE": "Safe",
+  "drugs2.advice": "What to do",
+  "drugs2.empty": "Type or select a medication to begin.",
+  "drugs2.error": "Could not analyze this medication. Please try again.",
+  "drugs2.disclaimer": "Consult your doctor or pharmacist before taking any medication.",
+
 };
 
 const ar: Record<string, string> = {
