@@ -258,6 +258,24 @@ const en: Record<string, string> = {
   "sym.s.throat": "Sore throat",
   "sym.s.cough": "Cough",
   "sym.s.vision": "Blurred vision",
+
+  "drugs2.title": "Drug & Food Interactions",
+  "drugs2.subtitle": "Check what to avoid and the best time to take your medication.",
+  "drugs2.search": "Search a medication...",
+  "drugs2.suggestions": "Common medications",
+  "drugs2.check": "Check Interactions",
+  "drugs2.checking": "Analyzing interactions...",
+  "drugs2.timing": "Best time to take it",
+  "drugs2.foodInter": "Food interactions",
+  "drugs2.drugInter": "Drug interactions",
+  "drugs2.level.DANGER": "Avoid",
+  "drugs2.level.CAUTION": "Use caution",
+  "drugs2.level.SAFE": "Safe",
+  "drugs2.advice": "What to do",
+  "drugs2.empty": "Type or select a medication to begin.",
+  "drugs2.error": "Could not analyze this medication. Please try again.",
+  "drugs2.disclaimer": "Consult your doctor or pharmacist before taking any medication.",
+
 };
 
 const ar: Record<string, string> = {
@@ -518,6 +536,24 @@ const ar: Record<string, string> = {
   "sym.s.throat": "التهاب الحلق",
   "sym.s.cough": "سعال",
   "sym.s.vision": "تشوش الرؤية",
+
+  "drugs2.title": "تفاعلات الأدوية والطعام",
+  "drugs2.subtitle": "تحقق مما يجب تجنبه وأفضل وقت لتناول دوائك.",
+  "drugs2.search": "ابحث عن دواء...",
+  "drugs2.suggestions": "أدوية شائعة",
+  "drugs2.check": "فحص التفاعلات",
+  "drugs2.checking": "جاري تحليل التفاعلات...",
+  "drugs2.timing": "أفضل وقت للتناول",
+  "drugs2.foodInter": "تفاعلات الطعام",
+  "drugs2.drugInter": "تفاعلات الأدوية",
+  "drugs2.level.DANGER": "تجنب",
+  "drugs2.level.CAUTION": "بحذر",
+  "drugs2.level.SAFE": "آمن",
+  "drugs2.advice": "ماذا تفعل",
+  "drugs2.empty": "اكتب أو اختر دواءً للبدء.",
+  "drugs2.error": "تعذر تحليل هذا الدواء. حاول مرة أخرى.",
+  "drugs2.disclaimer": "استشر طبيبك أو صيدلانيك قبل تناول أي دواء.",
+
 };
 
 export const translations = { en, ar };
