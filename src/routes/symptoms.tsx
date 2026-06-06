@@ -2,65 +2,102 @@ import { createFileRoute } from "@tanstack/react-router";
 import { MobileShell, ScreenHeader } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState } from "react";
-import { Thermometer, HeartPulse, Brain, Wind, Stethoscope, AlertTriangle, ShieldCheck, ChevronRight } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  Thermometer, HeartPulse, Brain, Wind, Stethoscope, AlertTriangle,
+  Activity, Eye, Pill, Soup, Ear, Sparkles, ShieldCheck, Loader2, RotateCcw,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { checkSymptoms, type SymptomResult } from "@/lib/symptom-check.functions";
 
 export const Route = createFileRoute("/symptoms")({
   head: () => ({ meta: [{ title: "Symptom Checker · إشارة حياة" }] }),
   component: Symptoms,
 });
 
-const symptomList = [
-  { id: "fever", key: "symptoms.fever", icon: Thermometer },
-  { id: "chest", key: "symptoms.chestPain", icon: HeartPulse },
-  { id: "headache", key: "symptoms.headache", icon: Brain },
-  { id: "breath", key: "symptoms.breath", icon: Wind },
-  { id: "cough", key: "symptoms.cough", icon: Stethoscope },
-  { id: "dizzy", key: "symptoms.dizzy", icon: AlertTriangle },
+const SYMPTOMS = [
+  { id: "headache", labelKey: "sym.s.headache", icon: Brain, value: "headache" },
+  { id: "fever", labelKey: "sym.s.fever", icon: Thermometer, value: "fever" },
+  { id: "chestPain", labelKey: "sym.s.chestPain", icon: HeartPulse, value: "chest pain" },
+  { id: "breath", labelKey: "sym.s.breath", icon: Wind, value: "shortness of breath" },
+  { id: "nausea", labelKey: "sym.s.nausea", icon: Soup, value: "nausea" },
+  { id: "dizziness", labelKey: "sym.s.dizziness", icon: AlertTriangle, value: "dizziness" },
+  { id: "stomach", labelKey: "sym.s.stomach", icon: Pill, value: "stomach pain" },
+  { id: "back", labelKey: "sym.s.back", icon: Activity, value: "back pain" },
+  { id: "fatigue", labelKey: "sym.s.fatigue", icon: Sparkles, value: "fatigue" },
+  { id: "throat", labelKey: "sym.s.throat", icon: Ear, value: "sore throat" },
+  { id: "cough", labelKey: "sym.s.cough", icon: Stethoscope, value: "cough" },
+  { id: "vision", labelKey: "sym.s.vision", icon: Eye, value: "blurred vision" },
 ];
 
-function Symptoms() {
-  const { t } = useLanguage();
-  const [selected, setSelected] = useState<string[]>(["fever", "chest"]);
-  const toggle = (id: string) => setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+const RISK_STYLES: Record<SymptomResult["risk_level"], string> = {
+  LOW: "bg-success/15 border-success/40 text-success-foreground",
+  MODERATE: "bg-warning/15 border-warning/40 text-warning-foreground",
+  EMERGENCY: "bg-destructive/15 border-destructive/50 text-destructive-foreground",
+};
 
-  const risk = selected.includes("chest") || selected.includes("breath") ? "high" : selected.length >= 2 ? "moderate" : "low";
-  const meta = {
-    low: { color: "bg-success text-success-foreground", labelKey: "symptoms.low", actionKey: "symptoms.visitPharmacist" },
-    moderate: { color: "bg-warning text-warning-foreground", labelKey: "symptoms.moderate", actionKey: "symptoms.consultDoctor" },
-    high: { color: "bg-destructive text-destructive-foreground", labelKey: "symptoms.high", actionKey: "symptoms.goER" },
-  }[risk];
+const RISK_DOT: Record<SymptomResult["risk_level"], string> = {
+  LOW: "bg-success",
+  MODERATE: "bg-warning",
+  EMERGENCY: "bg-destructive",
+};
+
+function Symptoms() {
+  const { t, isRTL } = useLanguage();
+  const check = useServerFn(checkSymptoms);
+
+  const [selected, setSelected] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<SymptomResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const toggle = (id: string) =>
+    setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+
+  const onCheck = async () => {
+    setError(null);
+    setResult(null);
+    if (selected.length === 0) {
+      setError(t("sym.empty"));
+      return;
+    }
+    setLoading(true);
+    try {
+      const values = SYMPTOMS.filter((s) => selected.includes(s.id)).map((s) => s.value);
+      const r = await check({ data: { symptoms: values } });
+      setResult(r);
+    } catch (e) {
+      console.error(e);
+      setError(e instanceof Error ? e.message : t("sym.error"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onClear = () => {
+    setSelected([]);
+    setResult(null);
+    setError(null);
+  };
 
   return (
     <MobileShell>
-      <ScreenHeader title={t("symptoms.title")} subtitle={t("symptoms.subtitle")} />
+      <ScreenHeader title={t("sym.title")} subtitle={t("sym.subtitle")} />
 
       <section className="px-5">
-        <div className={cn("rounded-3xl p-5 shadow-soft", meta.color)}>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-widest opacity-80">{t("symptoms.aiScore")}</p>
-              <p className="text-2xl font-bold mt-1">{t(meta.labelKey)}</p>
-            </div>
-            <div className="relative size-20">
-              <svg viewBox="0 0 36 36" className="size-20 -rotate-90">
-                <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
-                <circle cx="18" cy="18" r="15" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${risk === "high" ? 88 : risk === "moderate" ? 60 : 28},100`} strokeLinecap="round" />
-              </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-xl font-bold">{risk === "high" ? "88" : risk === "moderate" ? "60" : "28"}</span>
-            </div>
-          </div>
-          <div className="mt-4 flex items-center gap-2 text-xs bg-black/10 rounded-xl px-3 py-2">
-            <ShieldCheck className="size-4" />
-            <span>{t("symptoms.recommended")} <strong>{t(meta.actionKey)}</strong></span>
-          </div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-semibold">{t("sym.select")}</h2>
+          {selected.length > 0 && (
+            <button
+              onClick={onClear}
+              className="text-xs text-muted-foreground flex items-center gap-1 hover:text-foreground"
+            >
+              <RotateCcw className="size-3" /> {t("sym.clear")}
+            </button>
+          )}
         </div>
-      </section>
-
-      <section className="px-5 mt-6">
-        <h2 className="text-base font-semibold mb-3">{t("symptoms.select")}</h2>
         <div className="grid grid-cols-2 gap-3">
-          {symptomList.map(({ id, key, icon: Icon }) => {
+          {SYMPTOMS.map(({ id, labelKey, icon: Icon }) => {
             const active = selected.includes(id);
             return (
               <button
@@ -68,34 +105,80 @@ function Symptoms() {
                 onClick={() => toggle(id)}
                 className={cn(
                   "rounded-3xl p-4 border text-left transition-all",
-                  active ? "bg-gradient-brand text-primary-foreground border-transparent shadow-soft" : "bg-card border-border"
+                  active
+                    ? "bg-gradient-brand text-primary-foreground border-transparent shadow-soft"
+                    : "bg-card border-border hover:border-primary/40"
                 )}
               >
                 <Icon className="size-6 mb-3" />
-                <p className="font-semibold text-sm leading-tight">{t(key)}</p>
+                <p className="font-semibold text-sm leading-tight">{t(labelKey)}</p>
               </button>
             );
           })}
         </div>
       </section>
 
-      <section className="px-5 mt-6 space-y-3">
-        <h2 className="text-base font-semibold">{t("symptoms.nextSteps")}</h2>
-        {[
-          { tKey: "symptoms.talkPharmacist", sKey: "symptoms.free247", tone: "bg-success/30" },
-          { tKey: "symptoms.bookDoctor", sKey: "symptoms.telehealth", tone: "bg-teal/20" },
-          { tKey: "symptoms.findER", sKey: "symptoms.erLocation", tone: "bg-destructive/15" },
-        ].map((c) => (
-          <button key={c.tKey} className={cn("w-full rounded-2xl p-4 flex items-center gap-3 text-left", c.tone)}>
-            <Stethoscope className="size-5" />
-            <div className="flex-1">
-              <p className="font-semibold text-sm">{t(c.tKey)}</p>
-              <p className="text-xs text-muted-foreground">{t(c.sKey)}</p>
-            </div>
-            <ChevronRight className="size-4 text-muted-foreground" />
-          </button>
-        ))}
+      <section className="px-5 mt-6">
+        <button
+          onClick={onCheck}
+          disabled={loading}
+          className="w-full rounded-2xl bg-gradient-brand text-primary-foreground font-semibold py-4 flex items-center justify-center gap-2 shadow-soft disabled:opacity-70"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="size-5 animate-spin" />
+              {t("sym.checking")}
+            </>
+          ) : (
+            <>
+              <Sparkles className="size-5" />
+              {t("sym.check")} · فحص الأعراض
+            </>
+          )}
+        </button>
+        {error && (
+          <p className="mt-3 text-sm text-destructive text-center">{error}</p>
+        )}
       </section>
+
+      {result && (
+        <section className="px-5 mt-6 space-y-4">
+          <div className={cn("rounded-3xl border p-5 shadow-soft", RISK_STYLES[result.risk_level])}>
+            <div className="flex items-center gap-2 text-xs uppercase tracking-widest opacity-80">
+              <span className={cn("size-2 rounded-full", RISK_DOT[result.risk_level])} />
+              {t("sym.result")}
+            </div>
+            <div className="mt-2 flex items-baseline justify-between gap-3">
+              <p className="text-2xl font-bold">{t(`sym.risk.${result.risk_level}`)}</p>
+              <p className="text-sm opacity-80">{t("sym.risk")}</p>
+            </div>
+
+            <div className="mt-4 space-y-3 text-sm">
+              <p dir="rtl" className="text-right leading-relaxed">{result.explanation_ar}</p>
+              <p dir="ltr" className="text-left leading-relaxed">{result.explanation_en}</p>
+            </div>
+
+            <div className="mt-4 rounded-2xl bg-background/40 border border-border/40 p-3 flex items-center gap-3">
+              <ShieldCheck className="size-5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-[11px] uppercase tracking-wider opacity-70">{t("sym.recommendation")}</p>
+                <p className="font-semibold text-sm">{t(`sym.rec.${result.recommendation}`)}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border/60 bg-muted/40 p-4 text-xs text-muted-foreground space-y-1.5">
+            <p dir="rtl" className="text-right">هذا ليس بديلاً عن الاستشارة الطبية المتخصصة</p>
+            <p dir="ltr" className="text-left">This is not a substitute for professional medical advice</p>
+          </div>
+        </section>
+      )}
+
+      {!result && !loading && (
+        <p className={cn("px-5 mt-6 text-[11px] text-muted-foreground", isRTL ? "text-right" : "text-left")}>
+          {t("sym.disclaimer")}
+        </p>
+      )}
     </MobileShell>
   );
 }
