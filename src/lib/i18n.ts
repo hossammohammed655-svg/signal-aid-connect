@@ -536,6 +536,24 @@ const ar: Record<string, string> = {
   "sym.s.throat": "التهاب الحلق",
   "sym.s.cough": "سعال",
   "sym.s.vision": "تشوش الرؤية",
+
+  "drugs2.title": "تفاعلات الأدوية والطعام",
+  "drugs2.subtitle": "تحقق مما يجب تجنبه وأفضل وقت لتناول دوائك.",
+  "drugs2.search": "ابحث عن دواء...",
+  "drugs2.suggestions": "أدوية شائعة",
+  "drugs2.check": "فحص التفاعلات",
+  "drugs2.checking": "جاري تحليل التفاعلات...",
+  "drugs2.timing": "أفضل وقت للتناول",
+  "drugs2.foodInter": "تفاعلات الطعام",
+  "drugs2.drugInter": "تفاعلات الأدوية",
+  "drugs2.level.DANGER": "تجنب",
+  "drugs2.level.CAUTION": "بحذر",
+  "drugs2.level.SAFE": "آمن",
+  "drugs2.advice": "ماذا تفعل",
+  "drugs2.empty": "اكتب أو اختر دواءً للبدء.",
+  "drugs2.error": "تعذر تحليل هذا الدواء. حاول مرة أخرى.",
+  "drugs2.disclaimer": "استشر طبيبك أو صيدلانيك قبل تناول أي دواء.",
+
 };
 
 export const translations = { en, ar };
