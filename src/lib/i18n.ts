@@ -276,7 +276,33 @@ const en: Record<string, string> = {
   "drugs2.error": "Could not analyze this medication. Please try again.",
   "drugs2.disclaimer": "Consult your doctor or pharmacist before taking any medication.",
 
+  "translate2.title": "Sign Language Translation",
+  "translate2.subtitle": "Capture a sign and let AI translate it",
+  "translate2.start": "Start camera",
+  "translate2.capture": "Capture & Translate",
+  "translate2.translating": "Translating...",
+  "translate2.retake": "Retake",
+  "translate2.switch": "Switch camera",
+  "translate2.cameraError": "Cannot access camera. Please grant permission.",
+  "translate2.aiError": "Translation failed. Please try again.",
+  "translate2.waiting": "Position your hands in frame, then tap capture.",
+  "translate2.result": "Translation",
+
+  "reports2.title": "Session Reports",
+  "reports2.subtitle": "Your AI-assisted health history",
+  "reports2.empty": "No sessions yet. Run a symptom check to get started.",
+  "reports2.export": "Export PDF",
+  "reports2.symptoms": "Symptoms",
+  "reports2.explanation": "Explanation",
+  "reports2.recommendation": "Recommendation",
+  "reports2.loading": "Loading your sessions...",
+
+  "social.google": "Continue with Google",
+  "social.apple": "Continue with Apple",
+  "social.error": "Sign in failed. Please try again.",
+
 };
+
 
 const ar: Record<string, string> = {
   "splash.title": "إشارة حياة",
