@@ -580,7 +580,33 @@ const ar: Record<string, string> = {
   "drugs2.error": "تعذر تحليل هذا الدواء. حاول مرة أخرى.",
   "drugs2.disclaimer": "استشر طبيبك أو صيدلانيك قبل تناول أي دواء.",
 
+  "translate2.title": "ترجمة لغة الإشارة",
+  "translate2.subtitle": "التقط إشارة ودع الذكاء الاصطناعي يترجمها",
+  "translate2.start": "تشغيل الكاميرا",
+  "translate2.capture": "التقط وترجم",
+  "translate2.translating": "جاري الترجمة...",
+  "translate2.retake": "إعادة التقاط",
+  "translate2.switch": "تبديل الكاميرا",
+  "translate2.cameraError": "لا يمكن الوصول إلى الكاميرا. يرجى منح الإذن.",
+  "translate2.aiError": "فشلت الترجمة. حاول مرة أخرى.",
+  "translate2.waiting": "ضع يديك أمام الكاميرا ثم اضغط التقاط.",
+  "translate2.result": "الترجمة",
+
+  "reports2.title": "تقارير الجلسات",
+  "reports2.subtitle": "سجلك الصحي المدعوم بالذكاء الاصطناعي",
+  "reports2.empty": "لا توجد جلسات بعد. قم بفحص الأعراض للبدء.",
+  "reports2.export": "تصدير PDF",
+  "reports2.symptoms": "الأعراض",
+  "reports2.explanation": "الشرح",
+  "reports2.recommendation": "التوصية",
+  "reports2.loading": "جاري تحميل الجلسات...",
+
+  "social.google": "المتابعة مع جوجل",
+  "social.apple": "المتابعة مع آبل",
+  "social.error": "فشل تسجيل الدخول. حاول مرة أخرى.",
+
 };
+
 
 export const translations = { en, ar };
 
