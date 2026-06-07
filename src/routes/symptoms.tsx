@@ -9,11 +9,13 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkSymptoms, type SymptomResult } from "@/lib/symptom-check.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/symptoms")({
   head: () => ({ meta: [{ title: "Symptom Checker · إشارة حياة" }] }),
   component: Symptoms,
 });
+
 
 const SYMPTOMS = [
   { id: "headache", labelKey: "sym.s.headache", icon: Brain, value: "headache" },
@@ -66,6 +68,18 @@ function Symptoms() {
       const values = SYMPTOMS.filter((s) => selected.includes(s.id)).map((s) => s.value);
       const r = await check({ data: { symptoms: values } });
       setResult(r);
+      // Save session to database
+      const { data: userData } = await supabase.auth.getUser();
+      if (userData.user) {
+        await supabase.from("symptom_sessions").insert({
+          user_id: userData.user.id,
+          symptoms: values,
+          risk_level: r.risk_level,
+          explanation_ar: r.explanation_ar,
+          explanation_en: r.explanation_en,
+          recommendation: r.recommendation,
+        });
+      }
     } catch (e) {
       console.error(e);
       setError(e instanceof Error ? e.message : t("sym.error"));
@@ -73,6 +87,7 @@ function Symptoms() {
       setLoading(false);
     }
   };
+
 
   const onClear = () => {
     setSelected([]);

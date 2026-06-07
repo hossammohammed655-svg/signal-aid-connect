@@ -276,7 +276,33 @@ const en: Record<string, string> = {
   "drugs2.error": "Could not analyze this medication. Please try again.",
   "drugs2.disclaimer": "Consult your doctor or pharmacist before taking any medication.",
 
+  "translate2.title": "Sign Language Translation",
+  "translate2.subtitle": "Capture a sign and let AI translate it",
+  "translate2.start": "Start camera",
+  "translate2.capture": "Capture & Translate",
+  "translate2.translating": "Translating...",
+  "translate2.retake": "Retake",
+  "translate2.switch": "Switch camera",
+  "translate2.cameraError": "Cannot access camera. Please grant permission.",
+  "translate2.aiError": "Translation failed. Please try again.",
+  "translate2.waiting": "Position your hands in frame, then tap capture.",
+  "translate2.result": "Translation",
+
+  "reports2.title": "Session Reports",
+  "reports2.subtitle": "Your AI-assisted health history",
+  "reports2.empty": "No sessions yet. Run a symptom check to get started.",
+  "reports2.export": "Export PDF",
+  "reports2.symptoms": "Symptoms",
+  "reports2.explanation": "Explanation",
+  "reports2.recommendation": "Recommendation",
+  "reports2.loading": "Loading your sessions...",
+
+  "social.google": "Continue with Google",
+  "social.apple": "Continue with Apple",
+  "social.error": "Sign in failed. Please try again.",
+
 };
+
 
 const ar: Record<string, string> = {
   "splash.title": "إشارة حياة",
@@ -554,7 +580,33 @@ const ar: Record<string, string> = {
   "drugs2.error": "تعذر تحليل هذا الدواء. حاول مرة أخرى.",
   "drugs2.disclaimer": "استشر طبيبك أو صيدلانيك قبل تناول أي دواء.",
 
+  "translate2.title": "ترجمة لغة الإشارة",
+  "translate2.subtitle": "التقط إشارة ودع الذكاء الاصطناعي يترجمها",
+  "translate2.start": "تشغيل الكاميرا",
+  "translate2.capture": "التقط وترجم",
+  "translate2.translating": "جاري الترجمة...",
+  "translate2.retake": "إعادة التقاط",
+  "translate2.switch": "تبديل الكاميرا",
+  "translate2.cameraError": "لا يمكن الوصول إلى الكاميرا. يرجى منح الإذن.",
+  "translate2.aiError": "فشلت الترجمة. حاول مرة أخرى.",
+  "translate2.waiting": "ضع يديك أمام الكاميرا ثم اضغط التقاط.",
+  "translate2.result": "الترجمة",
+
+  "reports2.title": "تقارير الجلسات",
+  "reports2.subtitle": "سجلك الصحي المدعوم بالذكاء الاصطناعي",
+  "reports2.empty": "لا توجد جلسات بعد. قم بفحص الأعراض للبدء.",
+  "reports2.export": "تصدير PDF",
+  "reports2.symptoms": "الأعراض",
+  "reports2.explanation": "الشرح",
+  "reports2.recommendation": "التوصية",
+  "reports2.loading": "جاري تحميل الجلسات...",
+
+  "social.google": "المتابعة مع جوجل",
+  "social.apple": "المتابعة مع آبل",
+  "social.error": "فشل تسجيل الدخول. حاول مرة أخرى.",
+
 };
+
 
 export const translations = { en, ar };
 
