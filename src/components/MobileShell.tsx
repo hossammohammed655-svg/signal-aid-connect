@@ -38,7 +38,8 @@ export function MobileShell({ children, hideNav = false }: { children: ReactNode
   return (
     <div className="min-h-dvh w-full flex justify-center bg-muted/40">
       <div className="relative w-full max-w-[440px] min-h-dvh bg-background flex flex-col overflow-hidden">
-        <main className="flex-1 pb-28">{children}</main>
+        <main key={pathname} className="flex-1 pb-28 animate-fade-in">{children}</main>
+
         {!hideNav && (
           <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-[420px] z-40">
             <div className="glass border border-border/60 rounded-3xl px-2 py-2 shadow-soft flex items-center justify-between">
