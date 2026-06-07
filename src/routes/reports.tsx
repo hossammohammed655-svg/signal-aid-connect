@@ -1,75 +1,182 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { MobileShell, ScreenHeader } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Download, FileText, Share2, ChevronRight, Sparkles } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Download, FileText, ChevronDown, ChevronUp, Loader2, Inbox } from "lucide-react";
+import { cn } from "@/lib/utils";
+import jsPDF from "jspdf";
 
 export const Route = createFileRoute("/reports")({
   head: () => ({ meta: [{ title: "Reports · إشارة حياة" }] }),
   component: Reports,
 });
 
+type Session = {
+  id: string;
+  symptoms: string[];
+  risk_level: "LOW" | "MODERATE" | "EMERGENCY";
+  explanation_ar: string;
+  explanation_en: string;
+  recommendation: string;
+  created_at: string;
+};
+
+const RISK_DOT: Record<string, string> = {
+  LOW: "bg-success",
+  MODERATE: "bg-warning",
+  EMERGENCY: "bg-destructive",
+};
+
+const RISK_BG: Record<string, string> = {
+  LOW: "bg-success/10 border-success/30",
+  MODERATE: "bg-warning/10 border-warning/30",
+  EMERGENCY: "bg-destructive/10 border-destructive/30",
+};
+
 function Reports() {
   const { t } = useLanguage();
+  const { user, profile } = useAuth();
+  const [sessions, setSessions] = useState<Session[] | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-  const timeline = [
-    { dateKey: "reports.today", tKey: "reports.consult", whoKey: "reports.noor", tags: ["Atorvastatin", "Diet"] },
-    { dateKey: "reports.yesterday", tKey: "reports.signSession", whoKey: "reports.drYousef", tags: [t("reports.headache"), t("reports.sleep")] },
-    { dateKey: "reports.may28", tKey: "reports.emergencyTriage", whoKey: "reports.autoSos", tags: [t("reports.chestPain"), t("reports.resolved")] },
-    { dateKey: "reports.may22", tKey: "reports.symptomCheck", whoKey: "reports.aiAssistant", tags: [t("reports.fever"), t("reports.lowRisk")] },
-  ];
+  useEffect(() => {
+    if (!user) return;
+    void (async () => {
+      const { data, error } = await supabase
+        .from("symptom_sessions")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) console.error(error);
+      setSessions((data as Session[]) ?? []);
+    })();
+  }, [user]);
+
+  const exportPdf = () => {
+    if (!sessions) return;
+    const doc = new jsPDF();
+    const name = profile?.full_name || user?.email || "User";
+    doc.setFontSize(18);
+    doc.text("Signs of Life - Session Report", 14, 18);
+    doc.setFontSize(11);
+    doc.text(`User: ${name}`, 14, 28);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 34);
+    doc.text(`Total sessions: ${sessions.length}`, 14, 40);
+
+    let y = 52;
+    sessions.forEach((s, i) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(`${i + 1}. ${new Date(s.created_at).toLocaleString()}  [${s.risk_level}]`, 14, y);
+      y += 6;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      const lines = [
+        `Symptoms: ${s.symptoms.join(", ")}`,
+        `Recommendation: ${s.recommendation}`,
+        `Explanation: ${s.explanation_en}`,
+      ];
+      lines.forEach((line) => {
+        const wrapped = doc.splitTextToSize(line, 180);
+        wrapped.forEach((w: string) => {
+          if (y > 280) {
+            doc.addPage();
+            y = 20;
+          }
+          doc.text(w, 14, y);
+          y += 5;
+        });
+      });
+      y += 4;
+    });
+
+    doc.save(`signs-of-life-report-${Date.now()}.pdf`);
+  };
 
   return (
     <MobileShell>
-      <ScreenHeader title={t("reports.title")} subtitle={t("reports.subtitle")} />
+      <ScreenHeader title={t("reports2.title")} subtitle={t("reports2.subtitle")} />
 
       <section className="px-5">
-        <div className="rounded-3xl p-5 bg-gradient-brand text-primary-foreground shadow-soft relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-aurora opacity-40" />
-          <div className="relative flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest opacity-80">
-                <Sparkles className="size-3" /> {t("reports.aiSummary")}
-              </div>
-              <p className="text-lg font-bold mt-1">{t("reports.consult")}</p>
-              <p className="text-sm opacity-90 mt-1 text-balance">{t("reports.consultDesc")}</p>
-            </div>
-          </div>
-          <div className="relative flex gap-2 mt-4">
-            <button className="flex-1 h-10 rounded-xl bg-white text-primary text-sm font-semibold flex items-center justify-center gap-2"><Download className="size-4" /> {t("reports.export")}</button>
-            <button className="size-10 rounded-xl glass border border-white/20 flex items-center justify-center" aria-label={t("reports.share")}><Share2 className="size-4" /></button>
-          </div>
-        </div>
+        <button
+          onClick={exportPdf}
+          disabled={!sessions || sessions.length === 0}
+          className="w-full rounded-2xl bg-gradient-brand text-primary-foreground py-3.5 flex items-center justify-center gap-2 shadow-soft font-semibold disabled:opacity-50"
+        >
+          <Download className="size-4" /> {t("reports2.export")} · تصدير PDF
+        </button>
       </section>
 
       <section className="px-5 mt-6">
-        <h2 className="text-base font-semibold mb-3">{t("reports.history")}</h2>
-
-        <div className="relative pl-5">
-          <span className="absolute left-1.5 top-2 bottom-2 w-px bg-border" />
-          <div className="space-y-4">
-            {timeline.map((s) => (
-              <div key={s.tKey} className="relative">
-                <span className="absolute -left-[18px] top-4 size-3 rounded-full bg-gradient-brand ring-4 ring-background" />
-                <div className="rounded-2xl bg-card border border-border p-4 shadow-soft">
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{t(s.dateKey)}</p>
-                  <div className="flex items-center justify-between mt-1">
-                    <div>
-                      <p className="font-semibold text-sm">{t(s.tKey)}</p>
-                      <p className="text-xs text-muted-foreground">{t(s.whoKey)}</p>
-                    </div>
-                    <FileText className="size-4 text-muted-foreground" />
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {s.tags.map((tag) => (
-                      <span key={tag} className="text-[10px] px-2 py-1 rounded-full bg-secondary text-secondary-foreground">{tag}</span>
-                    ))}
-                  </div>
-                  <button className="mt-3 text-xs text-primary font-medium flex items-center gap-1">{t("reports.viewFull")} <ChevronRight className="size-3" /></button>
-                </div>
-              </div>
-            ))}
+        {sessions === null ? (
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
+            <Loader2 className="size-5 animate-spin me-2" /> {t("reports2.loading")}
           </div>
-        </div>
+        ) : sessions.length === 0 ? (
+          <div className="rounded-3xl border border-border bg-card p-8 text-center space-y-3 animate-fade-in">
+            <div className="mx-auto size-14 rounded-2xl bg-secondary flex items-center justify-center">
+              <Inbox className="size-6 text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground">{t("reports2.empty")}</p>
+            <p dir="rtl" className="text-sm text-muted-foreground">لا توجد جلسات بعد. ابدأ بفحص الأعراض.</p>
+          </div>
+        ) : (
+          <div className="space-y-3 animate-fade-in">
+            {sessions.map((s) => {
+              const isOpen = expanded === s.id;
+              return (
+                <div
+                  key={s.id}
+                  className={cn("rounded-2xl border shadow-soft overflow-hidden", RISK_BG[s.risk_level])}
+                >
+                  <button
+                    onClick={() => setExpanded(isOpen ? null : s.id)}
+                    className="w-full p-4 flex items-start gap-3 text-left"
+                  >
+                    <span className={cn("mt-1 size-3 rounded-full shrink-0", RISK_DOT[s.risk_level])} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                        {new Date(s.created_at).toLocaleString()}
+                      </p>
+                      <p className="font-semibold text-sm mt-0.5 truncate">
+                        {t(`sym.risk.${s.risk_level}`)} · {s.symptoms.slice(0, 3).join(", ")}
+                        {s.symptoms.length > 3 ? "…" : ""}
+                      </p>
+                    </div>
+                    {isOpen ? <ChevronUp className="size-4 text-muted-foreground" /> : <ChevronDown className="size-4 text-muted-foreground" />}
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-4 pb-4 space-y-3 text-sm border-t border-border/40 pt-3 animate-fade-in">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">{t("reports2.symptoms")}</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {s.symptoms.map((sym) => (
+                            <span key={sym} className="text-[11px] px-2 py-1 rounded-full bg-background border border-border">{sym}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">{t("reports2.explanation")}</p>
+                        <p dir="rtl" className="text-right leading-relaxed">{s.explanation_ar}</p>
+                        <p dir="ltr" className="text-left leading-relaxed mt-1">{s.explanation_en}</p>
+                      </div>
+                      <div className="rounded-xl bg-background/60 border border-border/40 p-3 flex items-center gap-2">
+                        <FileText className="size-4 text-primary" />
+                        <p className="text-sm font-semibold">{t(`sym.rec.${s.recommendation}`) || s.recommendation}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
     </MobileShell>
   );
