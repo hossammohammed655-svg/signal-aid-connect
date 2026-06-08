@@ -57,46 +57,67 @@ function Reports() {
     if (!sessions) return;
     const doc = new jsPDF();
     const name = profile?.full_name || user?.email || "User";
-    doc.setFontSize(18);
-    doc.text("Signs of Life - Session Report", 14, 18);
-    doc.setFontSize(11);
-    doc.text(`User: ${name}`, 14, 28);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 34);
-    doc.text(`Total sessions: ${sessions.length}`, 14, 40);
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-    let y = 52;
-    sessions.forEach((s, i) => {
-      if (y > 270) {
-        doc.addPage();
-        y = 20;
-      }
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "bold");
-      doc.text(`${i + 1}. ${new Date(s.created_at).toLocaleString()}  [${s.risk_level}]`, 14, y);
-      y += 6;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10);
-      const lines = [
-        `Symptoms: ${s.symptoms.join(", ")}`,
-        `Recommendation: ${s.recommendation}`,
-        `Explanation: ${s.explanation_en}`,
-      ];
-      lines.forEach((line) => {
-        const wrapped = doc.splitTextToSize(line, 180);
-        wrapped.forEach((w: string) => {
-          if (y > 280) {
-            doc.addPage();
-            y = 20;
-          }
-          doc.text(w, 14, y);
-          y += 5;
-        });
-      });
-      y += 4;
+    // Header
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("Signs of Life", pageWidth / 2, 18, { align: "center" });
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.text("ishara hayah", pageWidth / 2, 25, { align: "center" });
+
+    let y = 36;
+    doc.setFontSize(10);
+    doc.text(`${t("reports3.user")}: ${name}`, 14, y); y += 6;
+    doc.text(`${t("reports3.exportedAt")}: ${new Date().toLocaleString()}`, 14, y); y += 6;
+    doc.text(`Sessions: ${sessions.length}`, 14, y); y += 8;
+
+    // Table header
+    doc.setFont("helvetica", "bold");
+    doc.setFillColor(15, 23, 42);
+    doc.setTextColor(255, 255, 255);
+    doc.rect(14, y - 5, pageWidth - 28, 8, "F");
+    doc.text("Date", 16, y); doc.text("Symptoms", 60, y); doc.text("Risk", 130, y); doc.text("Recommend.", 155, y);
+    y += 6;
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "normal");
+
+    sessions.forEach((s) => {
+      if (y > 270) { doc.addPage(); y = 20; }
+      const date = new Date(s.created_at).toLocaleDateString();
+      const syms = s.symptoms.join(", ");
+      const symLines = doc.splitTextToSize(syms, 65);
+      const recLines = doc.splitTextToSize(s.recommendation, 45);
+      const rows = Math.max(symLines.length, recLines.length, 1);
+      doc.text(date, 16, y);
+      doc.text(symLines, 60, y);
+      doc.text(s.risk_level, 130, y);
+      doc.text(recLines, 155, y);
+      y += rows * 5 + 3;
+      doc.setDrawColor(220, 220, 220);
+      doc.line(14, y - 1, pageWidth - 14, y - 1);
     });
 
-    doc.save(`signs-of-life-report-${Date.now()}.pdf`);
+    // Disclaimer
+    if (y > 260) { doc.addPage(); y = 20; } else { y += 10; }
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 120);
+    const disclaimerEn = "This report is AI-generated and is not a substitute for professional medical advice.";
+    const disclaimerAr = "Hatha at-taqreer wa-laysa badeelan an al-istisharah at-tibbiyyah.";
+    doc.text(doc.splitTextToSize(disclaimerEn, pageWidth - 28), 14, y);
+    y += 8;
+    doc.text(doc.splitTextToSize(disclaimerAr, pageWidth - 28), 14, y);
+
+    // Open in new tab (works in Android WebView)
+    const blobUrl = doc.output("bloburl");
+    const newWin = window.open(blobUrl, "_blank");
+    if (!newWin) {
+      // Fallback: trigger download
+      doc.save(`signs-of-life-report-${Date.now()}.pdf`);
+    }
   };
+
 
   return (
     <MobileShell>
