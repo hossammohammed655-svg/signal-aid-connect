@@ -3,7 +3,7 @@ import { MobileShell } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell, Globe, Moon, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility } from "lucide-react";
+import { Bell, Globe, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile · إشارة حياة" }] }),
@@ -34,9 +34,9 @@ function Profile() {
 
   const prefItems = [
     { icon: Globe, label: t("profile.language"), sub: isRTL ? t("profile.arabic") : t("profile.english"), onClick: () => setLang(isRTL ? "en" : "ar") },
-    { icon: Moon, label: t("profile.appearance"), sub: t("profile.system") },
     { icon: Bell, label: t("profile.notifications"), sub: t("profile.on") },
   ];
+
 
   return (
     <MobileShell>

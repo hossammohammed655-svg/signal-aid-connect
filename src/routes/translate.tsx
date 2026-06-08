@@ -24,8 +24,12 @@ function Translate() {
   const [result, setResult] = useState<SignTranslateResult | null>(null);
   const [snapshot, setSnapshot] = useState<string | null>(null);
 
-  const startCamera = async (mode: "user" | "environment" = facing) => {
+  async function startCamera(mode: "user" | "environment" = facing) {
     setError(null);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError(t("translate3.permDenied"));
+      return;
+    }
     try {
       if (streamRef.current) streamRef.current.getTracks().forEach((tr) => tr.stop());
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -40,9 +44,14 @@ function Translate() {
       setActive(true);
     } catch (e) {
       console.error(e);
-      setError(t("translate2.cameraError"));
+      const name = (e as { name?: string })?.name;
+      if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+        setError(t("translate3.permDenied"));
+      } else {
+        setError(t("translate2.cameraError"));
+      }
     }
-  };
+  }
 
   useEffect(() => {
     return () => {
@@ -50,13 +59,13 @@ function Translate() {
     };
   }, []);
 
-  const switchCamera = async () => {
+  async function switchCamera() {
     const next = facing === "user" ? "environment" : "user";
     setFacing(next);
     await startCamera(next);
-  };
+  }
 
-  const capture = async () => {
+  async function capture() {
     if (!videoRef.current || !canvasRef.current) return;
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -67,7 +76,7 @@ function Translate() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, w, h);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
     setSnapshot(dataUrl);
     setLoading(true);
     setError(null);
@@ -81,13 +90,13 @@ function Translate() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const retake = () => {
+  function retake() {
     setSnapshot(null);
     setResult(null);
     setError(null);
-  };
+  }
 
   return (
     <div className="min-h-dvh w-full flex justify-center bg-black">
@@ -120,6 +129,7 @@ function Translate() {
                 ref={videoRef}
                 playsInline
                 muted
+                autoPlay
                 className="absolute inset-0 size-full object-cover"
                 style={{ transform: facing === "user" ? "scaleX(-1)" : undefined }}
               />
@@ -138,36 +148,43 @@ function Translate() {
                 </button>
               </div>
             )}
-
-            {(result || loading) && (
-              <div className="absolute bottom-4 left-4 right-4 glass border border-white/20 rounded-2xl p-4 animate-fade-in">
-                <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/70 mb-1">
-                  <Languages className="size-3" /> {t("translate2.result")}
-                </div>
-                {loading ? (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Loader2 className="size-4 animate-spin" />
-                    {t("translate2.translating")}
-                  </div>
-                ) : result ? (
-                  <div className="space-y-1.5">
-                    <p dir="rtl" className="text-right text-base font-semibold leading-snug">{result.text_ar}</p>
-                    <p dir="ltr" className="text-left text-base font-semibold leading-snug">{result.text_en}</p>
-                  </div>
-                ) : null}
-              </div>
-            )}
           </div>
 
           {error && (
-            <p className="mt-4 text-center text-sm text-destructive font-medium">{error}</p>
+            <div className="mt-4 rounded-2xl bg-destructive/15 border border-destructive/40 p-3 text-center">
+              <p className="text-sm text-destructive font-medium">{error}</p>
+            </div>
           )}
 
-          {result && !loading && (
+          {(loading || result) && (
             <div className="mt-5 rounded-3xl bg-card text-foreground p-5 shadow-soft animate-fade-in">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">{t("translate2.result")}</p>
-              <p dir="rtl" className="text-right text-xl font-bold leading-snug">{result.text_ar}</p>
-              <p dir="ltr" className="text-left text-xl font-bold leading-snug mt-2">{result.text_en}</p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("translate2.result")}</p>
+                {result && !loading && (
+                  <span
+                    className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${
+                      result.confidence === "HIGH"
+                        ? "bg-success/20 text-success-foreground"
+                        : result.confidence === "MEDIUM"
+                          ? "bg-warning/20 text-foreground"
+                          : "bg-secondary text-muted-foreground"
+                    }`}
+                  >
+                    {t("translate3.confidence")}: {t(`translate3.conf.${result.confidence}`)}
+                  </span>
+                )}
+              </div>
+              {loading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="size-4 animate-spin" />
+                  {t("translate2.translating")}
+                </div>
+              ) : result ? (
+                <div className="space-y-2">
+                  <p dir="rtl" className="text-right text-2xl font-bold leading-snug">{result.text_ar || t("translate3.noSign")}</p>
+                  <p dir="ltr" className="text-left text-2xl font-bold leading-snug">{result.text_en || t("translate3.noSign")}</p>
+                </div>
+              ) : null}
             </div>
           )}
         </div>
