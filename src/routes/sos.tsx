@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, MapPin, Phone, Building2, Ambulance, Plus, Pencil, Trash2, X, Loader2, Users } from "lucide-react";
+import { ArrowLeft, MapPin, Phone, Building2, Ambulance, Plus, Pencil, Trash2, X, Users } from "lucide-react";
 
 export const Route = createFileRoute("/sos")({
   head: () => ({ meta: [{ title: "Emergency · إشارة حياة" }] }),
