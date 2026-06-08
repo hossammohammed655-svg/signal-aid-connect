@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      emergency_contacts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -71,6 +98,45 @@ export type Database = {
           risk_level?: string
           symptoms?: string[]
           user_id?: string
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          category: string
+          created_at: string
+          description_ar: string
+          description_en: string
+          id: string
+          is_verified: boolean
+          thumbnail_url: string | null
+          title_ar: string
+          title_en: string
+          video_url: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description_ar?: string
+          description_en?: string
+          id?: string
+          is_verified?: boolean
+          thumbnail_url?: string | null
+          title_ar: string
+          title_en: string
+          video_url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description_ar?: string
+          description_en?: string
+          id?: string
+          is_verified?: boolean
+          thumbnail_url?: string | null
+          title_ar?: string
+          title_en?: string
+          video_url?: string
         }
         Relationships: []
       }
