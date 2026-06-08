@@ -6,9 +6,10 @@ const inputSchema = z.object({
 });
 
 export type SignTranslateResult = {
+  detected: boolean;
   text_en: string;
   text_ar: string;
-  detected: boolean;
+  confidence: "HIGH" | "MEDIUM" | "LOW";
 };
 
 export const translateSign = createServerFn({ method: "POST" })
@@ -21,7 +22,7 @@ export const translateSign = createServerFn({ method: "POST" })
       ? data.imageBase64
       : `data:image/jpeg;base64,${data.imageBase64}`;
 
-    const systemPrompt = `You are a sign language interpreter. Look at the image and if you see someone making hand signs, translate what they are signing into text. Respond ONLY with strict JSON of shape {"detected": boolean, "text_en": string, "text_ar": string}. If no clear sign language is detected, set detected=false and politely say so in both languages.`;
+    const systemPrompt = `You are a sign language interpreter. Look carefully at the hands in this image. If you see sign language gestures translate them. Respond ONLY with strict JSON of shape {"detected": boolean, "translation_ar": string, "translation_en": string, "confidence": "HIGH" | "MEDIUM" | "LOW"}. If no clear sign is detected, set detected=false, translation_ar="لم يتم اكتشاف إشارة واضحة", translation_en="No clear sign detected", confidence="LOW".`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -56,10 +57,12 @@ export const translateSign = createServerFn({ method: "POST" })
     const content: string = json?.choices?.[0]?.message?.content ?? "{}";
     try {
       const parsed = JSON.parse(content);
+      const conf = String(parsed.confidence ?? "LOW").toUpperCase();
       return {
         detected: !!parsed.detected,
-        text_en: String(parsed.text_en ?? ""),
-        text_ar: String(parsed.text_ar ?? ""),
+        text_en: String(parsed.translation_en ?? parsed.text_en ?? ""),
+        text_ar: String(parsed.translation_ar ?? parsed.text_ar ?? ""),
+        confidence: (conf === "HIGH" || conf === "MEDIUM" ? conf : "LOW") as "HIGH" | "MEDIUM" | "LOW",
       };
     } catch {
       throw new Error("AI returned invalid JSON");
