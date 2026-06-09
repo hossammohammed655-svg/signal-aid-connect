@@ -104,6 +104,22 @@ function Profile() {
           </div>
         </div>
 
+        <div>
+          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{t("profile.about")}</h2>
+          <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
+            <Link to="/about" className="w-full flex items-center gap-3 p-4 text-left">
+              <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
+                <Info className="size-5" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{t("about.title")}</p>
+                <p className="text-xs text-muted-foreground">{t("about.subtitle")}</p>
+              </div>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </Link>
+          </div>
+        </div>
+
         <button onClick={handleSignOut} className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 text-destructive font-semibold border border-destructive/30 bg-destructive/5">
           <LogOut className="size-4" /> {t("profile.signout")}
         </button>
