@@ -351,6 +351,19 @@ const en: Record<string, string> = {
   "reports3.colRisk": "Risk",
   "reports3.colRec": "Recommendation",
 
+  "about.title": "About Us",
+  "about.subtitle": "Our team & mission",
+  "about.description": "An AI-powered healthcare communication platform for deaf and speech-impaired users",
+  "about.supervisorTitle": "Under the Supervision of",
+  "about.supervisorName": "Assistant Prof. Dr. Radwa Mahrous",
+  "about.supervisorBadge": "Supervisor",
+  "about.teamTitle": "Team Members",
+  "about.infoTitle": "App Info",
+  "about.version": "Version",
+  "about.platform": "Platform",
+  "about.builtWith": "Built with",
+  "profile.about": "App",
+
 };
 
 
@@ -705,6 +718,19 @@ const ar: Record<string, string> = {
   "reports3.colSymptoms": "الأعراض",
   "reports3.colRisk": "الخطورة",
   "reports3.colRec": "التوصية",
+
+  "about.title": "من نحن",
+  "about.subtitle": "فريقنا ورسالتنا",
+  "about.description": "منصة تواصل صحي مدعومة بالذكاء الاصطناعي للصم وضعاف السمع",
+  "about.supervisorTitle": "تحت إشراف",
+  "about.supervisorName": "أ.د. رضوى محروس",
+  "about.supervisorBadge": "المشرفة",
+  "about.teamTitle": "فريق العمل",
+  "about.infoTitle": "معلومات التطبيق",
+  "about.version": "الإصدار",
+  "about.platform": "المنصة",
+  "about.builtWith": "بُني باستخدام",
+  "profile.about": "التطبيق",
 
 };
 
