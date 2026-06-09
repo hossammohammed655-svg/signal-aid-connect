@@ -3,7 +3,7 @@ import { MobileShell } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell, Globe, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility } from "lucide-react";
+import { Bell, Globe, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility, Info } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile · إشارة حياة" }] }),
