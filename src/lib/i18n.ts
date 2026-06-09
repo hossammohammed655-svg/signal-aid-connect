@@ -719,6 +719,19 @@ const ar: Record<string, string> = {
   "reports3.colRisk": "الخطورة",
   "reports3.colRec": "التوصية",
 
+  "about.title": "من نحن",
+  "about.subtitle": "فريقنا ورسالتنا",
+  "about.description": "منصة تواصل صحي مدعومة بالذكاء الاصطناعي للصم وضعاف السمع",
+  "about.supervisorTitle": "تحت إشراف",
+  "about.supervisorName": "أ.د. رضوى محروس",
+  "about.supervisorBadge": "المشرفة",
+  "about.teamTitle": "فريق العمل",
+  "about.infoTitle": "معلومات التطبيق",
+  "about.version": "الإصدار",
+  "about.platform": "المنصة",
+  "about.builtWith": "بُني باستخدام",
+  "profile.about": "التطبيق",
+
 };
 
 
