@@ -16,8 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { User, Phone, Mail, LogOut, Globe, Info, GraduationCap, Bell } from "lucide-react";
+import { User, Phone, Mail, LogOut, Globe, Info, GraduationCap } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile")({
@@ -153,7 +152,7 @@ function ProfilePage() {
               disabled={loading}
               className="w-full h-12 rounded-2xl bg-gradient-brand text-primary-foreground font-semibold"
             >
-              {loading ? "..." : t("drugs2.save") || "حفظ / Save"}
+              {loading ? "..." : t("sos2.save")}
             </Button>
           </CardContent>
         </Card>
