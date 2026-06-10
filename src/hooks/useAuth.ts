@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -7,6 +7,7 @@ export interface Profile {
   full_name: string;
   phone: string | null;
   user_type: "patient" | "pharmacist";
+  has_seen_tutorial: boolean;
 }
 
 export function useAuth() {
@@ -38,14 +39,34 @@ export function useAuth() {
     async function loadProfile(uid: string) {
       const { data } = await supabase
         .from("profiles")
-        .select("id, full_name, phone, user_type")
+        .select("id, full_name, phone, user_type, has_seen_tutorial")
         .eq("id", uid)
         .maybeSingle();
-      if (data) setProfile(data as Profile);
+      if (data) {
+        setProfile({
+          ...(data as Profile),
+          has_seen_tutorial: data.has_seen_tutorial ?? false,
+        });
+      }
     }
 
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  return { session, user, profile, loading };
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, full_name, phone, user_type, has_seen_tutorial")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (data) {
+      setProfile({
+        ...(data as Profile),
+        has_seen_tutorial: data.has_seen_tutorial ?? false,
+      });
+    }
+  }, [user]);
+
+  return { session, user, profile, loading, refreshProfile };
 }

@@ -3,7 +3,8 @@ import { MobileShell } from "@/components/MobileShell";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Bell, Globe, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility, Info } from "lucide-react";
+import { Bell, Globe, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility, Info, GraduationCap } from "lucide-react";
+import { useTutorial } from "@/contexts/TutorialContext";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Profile · إشارة حياة" }] }),
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/profile")({
 function Profile() {
   const { t, lang, setLang, isRTL } = useLanguage();
   const { user, profile } = useAuth();
+  const { openTutorial } = useTutorial();
   const navigate = useNavigate();
 
   async function handleSignOut() {
@@ -34,6 +36,7 @@ function Profile() {
 
   const prefItems = [
     { icon: Globe, label: t("profile.language"), sub: isRTL ? t("profile.arabic") : t("profile.english"), onClick: () => setLang(isRTL ? "en" : "ar") },
+    { icon: GraduationCap, label: t("profile.showTutorial"), sub: t("profile.showTutorialSub"), onClick: openTutorial },
     { icon: Bell, label: t("profile.notifications"), sub: t("profile.on") },
   ];
 
