@@ -58,64 +58,61 @@ function Reports() {
     const doc = new jsPDF();
     const name = profile?.full_name || user?.email || "User";
     const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 14;
 
-    // Header
-    doc.setFontSize(20);
+    doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
-    doc.text("Signs of Life", pageWidth / 2, 18, { align: "center" });
+    doc.text("Isharet Hayah / اشارة حياة", pageWidth / 2, 18, { align: "center" });
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
-    doc.text("ishara hayah", pageWidth / 2, 25, { align: "center" });
+    doc.text("Signs of Life Health Report", pageWidth / 2, 26, { align: "center" });
 
-    let y = 36;
+    let y = 38;
     doc.setFontSize(10);
-    doc.text(`${t("reports3.user")}: ${name}`, 14, y); y += 6;
-    doc.text(`${t("reports3.exportedAt")}: ${new Date().toLocaleString()}`, 14, y); y += 6;
-    doc.text(`Sessions: ${sessions.length}`, 14, y); y += 8;
+    doc.text(`${t("reports3.user")} / User: ${name}`, margin, y); y += 6;
+    doc.text(`${t("reports3.exportedAt")} / Export date: ${new Date().toLocaleString()}`, margin, y); y += 10;
 
-    // Table header
     doc.setFont("helvetica", "bold");
     doc.setFillColor(15, 23, 42);
     doc.setTextColor(255, 255, 255);
-    doc.rect(14, y - 5, pageWidth - 28, 8, "F");
-    doc.text("Date", 16, y); doc.text("Symptoms", 60, y); doc.text("Risk", 130, y); doc.text("Recommend.", 155, y);
+    doc.rect(margin, y - 5, pageWidth - margin * 2, 8, "F");
+    doc.text(`${t("reports3.colDate")}`, margin + 2, y);
+    doc.text(`${t("reports3.colSymptoms")}`, 52, y);
+    doc.text(`${t("reports3.colRisk")}`, 120, y);
+    doc.text(`${t("reports3.colRec")}`, 145, y);
     y += 6;
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "normal");
 
     sessions.forEach((s) => {
-      if (y > 270) { doc.addPage(); y = 20; }
+      if (y > 265) { doc.addPage(); y = 20; }
       const date = new Date(s.created_at).toLocaleDateString();
       const syms = s.symptoms.join(", ");
-      const symLines = doc.splitTextToSize(syms, 65);
-      const recLines = doc.splitTextToSize(s.recommendation, 45);
+      const rec = t(`sym.rec.${s.recommendation}`) || s.recommendation;
+      const symLines = doc.splitTextToSize(syms, 62);
+      const recLines = doc.splitTextToSize(rec, 48);
       const rows = Math.max(symLines.length, recLines.length, 1);
-      doc.text(date, 16, y);
-      doc.text(symLines, 60, y);
-      doc.text(s.risk_level, 130, y);
-      doc.text(recLines, 155, y);
-      y += rows * 5 + 3;
-      doc.setDrawColor(220, 220, 220);
-      doc.line(14, y - 1, pageWidth - 14, y - 1);
+      doc.text(date, margin + 2, y);
+      doc.text(symLines, 52, y);
+      doc.text(s.risk_level, 120, y);
+      doc.text(recLines, 145, y);
+      y += rows * 5 + 4;
+      doc.setDrawColor(200, 200, 200);
+      doc.line(margin, y - 2, pageWidth - margin, y - 2);
     });
 
-    // Disclaimer
-    if (y > 260) { doc.addPage(); y = 20; } else { y += 10; }
+    if (y > 250) { doc.addPage(); y = 20; } else { y += 12; }
     doc.setFontSize(9);
-    doc.setTextColor(120, 120, 120);
-    const disclaimerEn = "This report is AI-generated and is not a substitute for professional medical advice.";
-    const disclaimerAr = "Hatha at-taqreer wa-laysa badeelan an al-istisharah at-tibbiyyah.";
-    doc.text(doc.splitTextToSize(disclaimerEn, pageWidth - 28), 14, y);
-    y += 8;
-    doc.text(doc.splitTextToSize(disclaimerAr, pageWidth - 28), 14, y);
+    doc.setTextColor(100, 100, 100);
+    const disclaimerEn =
+      "This report is AI-generated and is not a substitute for professional medical advice. Always consult a qualified healthcare provider.";
+    const disclaimerAr =
+      "هذا التقرير مُولَّد بالذكاء الاصطناعي وليس بديلاً عن الاستشارة الطبية المتخصصة. استشر دائماً مقدم رعاية صحية مؤهل.";
+    doc.text(doc.splitTextToSize(`EN: ${disclaimerEn}`, pageWidth - margin * 2), margin, y);
+    y += doc.splitTextToSize(`EN: ${disclaimerEn}`, pageWidth - margin * 2).length * 4 + 4;
+    doc.text(doc.splitTextToSize(`AR: ${disclaimerAr}`, pageWidth - margin * 2), margin, y);
 
-    // Open in new tab (works in Android WebView)
-    const blobUrl = doc.output("bloburl");
-    const newWin = window.open(blobUrl, "_blank");
-    if (!newWin) {
-      // Fallback: trigger download
-      doc.save(`signs-of-life-report-${Date.now()}.pdf`);
-    }
+    doc.save(`isharet-hayah-report-${Date.now()}.pdf`);
   };
 
 

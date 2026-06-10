@@ -50,10 +50,10 @@ function About() {
             <Award className="size-7" />
           </div>
           <div>
-            <p className="text-base font-bold text-foreground">{t("about.supervisorName")}</p>
+            <p dir="rtl" className="text-lg font-bold text-foreground">أ.د.م رضوى محروس</p>
             <div className="inline-flex items-center gap-1.5 mt-1.5 px-2.5 py-1 rounded-full bg-yellow-500/20 border border-yellow-500/30">
               <span className="size-1.5 rounded-full bg-yellow-500" />
-              <span className="text-[11px] font-semibold text-yellow-600 dark:text-yellow-400">{t("about.supervisorBadge")}</span>
+              <span className="text-[11px] font-semibold text-yellow-400">{t("about.supervisorBadge")}</span>
             </div>
           </div>
         </div>

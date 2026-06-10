@@ -117,21 +117,23 @@ function SOS() {
     }
     const msg = buildWaMessage(c.lat, c.lng);
     const encoded = encodeURIComponent(msg);
-    // If we have contacts, open WA per contact with phone in URL; otherwise generic share.
-    if (contacts.length === 0) {
-      openExternal(`https://wa.me/?text=${encoded}`);
-      return;
-    }
-    // Open the first contact directly; queue the rest in new tabs.
+
+    // Generic WhatsApp share (works in Android WebView via location.href).
+    openExternal(`https://wa.me/?text=${encoded}`);
+
+    // Also message every saved emergency contact.
     contacts.forEach((contact, idx) => {
-      const phoneDigits = contact.phone.replace(/[^\d]/g, "");
+      const phoneDigits = contact.phone.replace(/[^\d+]/g, "").replace(/^\+/, "");
       const url = `https://wa.me/${phoneDigits}?text=${encoded}`;
-      if (idx === 0) {
-        openExternal(url);
-      } else {
-        setTimeout(() => window.open(url, "_blank"), 300 * idx);
-      }
+      setTimeout(() => openExternal(url), 800 * (idx + 1));
     });
+  }
+
+  function openHospital() {
+    const url = coords
+      ? `https://www.google.com/maps/search/hospital/@${coords.lat},${coords.lng},15z`
+      : "https://www.google.com/maps/search/hospital";
+    openExternal(url);
   }
 
   function openEdit(c: Contact | "new") {
@@ -234,23 +236,18 @@ function SOS() {
         </div>
 
         <div className="relative px-5 pb-4 grid grid-cols-1 gap-2.5">
-          <a href="tel:123" className="glass border border-white/20 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.99] transition">
+          <button type="button" onClick={() => openExternal("tel:123")} className="glass border border-white/20 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.99] transition w-full text-left">
             <div className="size-10 rounded-xl bg-white/15 flex items-center justify-center"><Ambulance className="size-5" /></div>
             <p className="text-sm font-semibold">{t("sos2.callAmbulance")}</p>
-          </a>
-          <a href="tel:122" className="glass border border-white/20 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.99] transition">
+          </button>
+          <button type="button" onClick={() => openExternal("tel:122")} className="glass border border-white/20 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.99] transition w-full text-left">
             <div className="size-10 rounded-xl bg-white/15 flex items-center justify-center"><Phone className="size-5" /></div>
             <p className="text-sm font-semibold">{t("sos2.callPolice")}</p>
-          </a>
-          <a
-            href={coords ? `https://www.google.com/maps/search/hospital/@${coords.lat},${coords.lng},15z` : "https://www.google.com/maps/search/hospital"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="glass border border-white/20 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.99] transition"
-          >
+          </button>
+          <button type="button" onClick={openHospital} className="glass border border-white/20 rounded-2xl p-3 flex items-center gap-3 active:scale-[0.99] transition w-full text-left">
             <div className="size-10 rounded-xl bg-white/15 flex items-center justify-center"><Building2 className="size-5" /></div>
             <p className="text-sm font-semibold">{t("sos2.findHospital")}</p>
-          </a>
+          </button>
         </div>
 
         {/* Emergency contacts */}
