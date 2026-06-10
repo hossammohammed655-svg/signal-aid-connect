@@ -46,11 +46,9 @@ function Translate() {
   const [tab, setTab] = useState("sign-to-text");
 
   return (
-    <div className="min-h-dvh w-full flex justify-center bg-black">
-      <div className="relative w-full max-w-[440px] min-h-dvh bg-neutral-950 text-white overflow-hidden flex flex-col animate-fade-in">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 via-turquoise/20 to-black pointer-events-none" />
-
-        <header className="relative z-10 flex items-center justify-between px-5 pt-12 pb-3">
+    <div className="min-h-dvh w-full flex justify-center bg-muted/40">
+      <div className="relative w-full max-w-[440px] min-h-dvh bg-background text-foreground overflow-hidden flex flex-col animate-fade-in">
+        <header className="relative z-10 flex items-center justify-between px-5 pt-12 pb-3 bg-gradient-brand text-primary-foreground rounded-b-[2rem]">
           <Link to="/home" className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label="Back">
             <ArrowLeft className="size-5" />
           </Link>
@@ -60,17 +58,17 @@ function Translate() {
           <div className="size-10" />
         </header>
 
-        <Tabs value={tab} onValueChange={setTab} className="relative z-10 flex-1 flex flex-col px-5 pb-8">
-          <TabsList className="w-full h-auto p-1 bg-white/10 rounded-2xl grid grid-cols-2 gap-1">
+        <Tabs value={tab} onValueChange={setTab} className="relative z-10 flex-1 flex flex-col px-5 pb-8 pt-4">
+          <TabsList className="w-full h-auto p-1 bg-secondary rounded-2xl grid grid-cols-2 gap-1">
             <TabsTrigger
               value="sign-to-text"
-              className="rounded-xl text-[11px] leading-tight py-2.5 px-2 data-[state=active]:bg-white data-[state=active]:text-primary whitespace-normal"
+              className="rounded-xl text-[11px] leading-tight py-2.5 px-2 data-[state=active]:bg-background data-[state=active]:text-primary whitespace-normal"
             >
               إشارة إلى نص / Sign to Text
             </TabsTrigger>
             <TabsTrigger
               value="text-to-sign"
-              className="rounded-xl text-[11px] leading-tight py-2.5 px-2 data-[state=active]:bg-white data-[state=active]:text-primary whitespace-normal"
+              className="rounded-xl text-[11px] leading-tight py-2.5 px-2 data-[state=active]:bg-background data-[state=active]:text-primary whitespace-normal"
             >
               نص إلى إشارة / Text to Sign
             </TabsTrigger>
@@ -264,7 +262,7 @@ function SignToTextTab({ t, isActive }: { t: (key: string) => string; isActive: 
         <button
           onClick={switchCamera}
           disabled={!cameraOn}
-          className="size-12 rounded-2xl glass border border-white/20 flex items-center justify-center disabled:opacity-40"
+          className="size-12 rounded-2xl border border-border bg-card flex items-center justify-center disabled:opacity-40"
           aria-label={t("translate2.switch")}
         >
           <RefreshCw className="size-5" />
@@ -273,8 +271,8 @@ function SignToTextTab({ t, isActive }: { t: (key: string) => string; isActive: 
         <button
           onClick={liveActive ? () => setLiveActive(false) : toggleLive}
           className={cn(
-            "rounded-2xl font-bold px-8 h-14 flex items-center gap-3 shadow-glow transition",
-            liveActive ? "bg-destructive text-white" : "bg-white text-primary",
+            "rounded-2xl font-bold px-8 h-14 flex items-center gap-3 shadow-soft transition",
+            liveActive ? "bg-destructive text-destructive-foreground" : "bg-gradient-brand text-primary-foreground",
           )}
         >
           {liveActive ? (
@@ -293,7 +291,7 @@ function SignToTextTab({ t, isActive }: { t: (key: string) => string; isActive: 
         {cameraOn && !liveActive && (
           <button
             onClick={stopLive}
-            className="size-12 rounded-2xl glass border border-white/20 flex items-center justify-center text-xs"
+            className="size-12 rounded-2xl border border-border bg-card flex items-center justify-center text-xs"
             aria-label="Stop camera"
           >
             <Camera className="size-5" />
@@ -346,7 +344,7 @@ function TextToSignTab({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex flex-col gap-4 flex-1">
       <div className="space-y-2">
-        <label className="text-xs text-white/70 flex items-center gap-2">
+        <label className="text-xs text-muted-foreground flex items-center gap-2">
           <Type className="size-3.5" /> اكتب كلمة أو جملة / Type a word or sentence
         </label>
         <textarea
@@ -354,12 +352,12 @@ function TextToSignTab({ t }: { t: (key: string) => string }) {
           onChange={(e) => setInput(e.target.value)}
           rows={3}
           placeholder="مثال: أحتاج مساعدة / Example: I need help"
-          className="w-full rounded-2xl bg-white/10 border border-white/20 px-4 py-3 text-sm outline-none resize-none placeholder:text-white/40"
+          className="w-full rounded-2xl bg-secondary border border-border px-4 py-3 text-sm outline-none resize-none placeholder:text-muted-foreground"
         />
         <button
           onClick={handleSubmit}
           disabled={loading || !input.trim()}
-          className="w-full rounded-2xl bg-white text-primary font-bold py-3.5 flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full rounded-2xl bg-gradient-brand text-primary-foreground font-bold py-3.5 flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {loading ? <Loader2 className="size-5 animate-spin" /> : <Languages className="size-5" />}
           {loading ? t("translate2.translating") : "ترجم إلى إشارة / Translate to Sign"}
@@ -375,20 +373,20 @@ function TextToSignTab({ t }: { t: (key: string) => string }) {
       {result && total > 0 && (
         <div className="flex-1 flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold text-white/90">
+            <p className="text-sm font-semibold text-foreground">
               Word {currentIndex + 1} of {total} · كلمة {currentIndex + 1} من {total}
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setTextScale((s) => Math.min(s + 0.15, 2))}
-                className="size-9 rounded-xl glass border border-white/20 flex items-center justify-center"
+                className="size-9 rounded-xl border border-border bg-card flex items-center justify-center"
                 aria-label="Increase text size"
               >
                 <ZoomIn className="size-4" />
               </button>
               <button
                 onClick={() => setShowAll((v) => !v)}
-                className="h-9 px-3 rounded-xl glass border border-white/20 flex items-center gap-1.5 text-xs font-semibold"
+                className="h-9 px-3 rounded-xl border border-border bg-card flex items-center gap-1.5 text-xs font-semibold"
               >
                 <List className="size-3.5" />
                 {showAll ? "Cards · بطاقات" : "Show All · عرض الكل"}
@@ -418,21 +416,21 @@ function TextToSignTab({ t }: { t: (key: string) => string }) {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="-left-1 border-white/20 bg-black/50 text-white hover:bg-black/70" />
-                <CarouselNext className="-right-1 border-white/20 bg-black/50 text-white hover:bg-black/70" />
+                <CarouselPrevious className="-left-1 border-border bg-card text-foreground hover:bg-secondary" />
+                <CarouselNext className="-right-1 border-border bg-card text-foreground hover:bg-secondary" />
               </Carousel>
               <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={() => carouselApi?.scrollPrev()}
                   disabled={currentIndex === 0}
-                  className="size-10 rounded-full glass border border-white/20 flex items-center justify-center disabled:opacity-30"
+                  className="size-10 rounded-full border border-border bg-card flex items-center justify-center disabled:opacity-30"
                 >
                   <ChevronLeft className="size-5" />
                 </button>
                 <button
                   onClick={() => carouselApi?.scrollNext()}
                   disabled={currentIndex >= total - 1}
-                  className="size-10 rounded-full glass border border-white/20 flex items-center justify-center disabled:opacity-30"
+                  className="size-10 rounded-full border border-border bg-card flex items-center justify-center disabled:opacity-30"
                 >
                   <ChevronRight className="size-5" />
                 </button>
@@ -467,8 +465,8 @@ function WordCard({
   const emojiSize = compact ? 48 : 72;
 
   return (
-    <div className={cn("rounded-3xl border border-white/20 bg-white/10 p-5", compact && "p-4")}>
-      <p className="text-[10px] uppercase tracking-widest text-white/50 mb-2">
+    <div className={cn("rounded-3xl border border-border bg-card p-5 shadow-soft", compact && "p-4")}>
+      <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">
         {index + 1} / {total}
       </p>
       <p
@@ -478,7 +476,7 @@ function WordCard({
       >
         {word.word_ar || word.word}
       </p>
-      <p className="text-center text-white/70 mt-1" style={{ fontSize: `${(baseSize - 8) * scale}px` }} dir="ltr">
+      <p className="text-center text-muted-foreground mt-1" style={{ fontSize: `${(baseSize - 8) * scale}px` }} dir="ltr">
         {word.word_en}
       </p>
       <p
@@ -507,8 +505,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   if (!value) return null;
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-wider text-white/50">{label}</p>
-      <p className="text-sm text-white/90">{value}</p>
+      <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-sm text-foreground">{value}</p>
     </div>
   );
 }
