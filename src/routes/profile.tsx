@@ -1,132 +1,136 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { MobileShell } from "@/components/MobileShell";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { Bell, Globe, ShieldCheck, HeartPulse, ChevronRight, Settings, LogOut, Accessibility, Info, GraduationCap } from "lucide-react";
-import { useTutorial } from "@/contexts/TutorialContext";
+import { useState, useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
+import { supabase } from '@/integrations/supabase/client'
 
-export const Route = createFileRoute("/profile")({
-  head: () => ({ meta: [{ title: "Profile · إشارة حياة" }] }),
-  component: Profile,
-});
+export const Route = createFileRoute('/profile')({
+  component: ProfilePage,
+})
 
-function Profile() {
-  const { t, lang, setLang, isRTL } = useLanguage();
-  const { user, profile } = useAuth();
-  const { openTutorial } = useTutorial();
-  const navigate = useNavigate();
+function ProfilePage() {
+  const navigate = useNavigate()
+  const [user, setUser] = useState<any>(null)
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [userType, setUserType] = useState('patient')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  async function handleSignOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/login", replace: true });
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { navigate({ to: '/login' }); return }
+      setUser(user)
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
+      if (data) {
+        setFullName(data.full_name || '')
+        setPhone(data.phone_number || '')
+        setUserType(data.user_type || 'patient')
+      }
+    }
+    getUser()
+  }, [])
+
+  const handleSave = async () => {
+    setLoading(true)
+    const { error } = await supabase
+      .from('profiles')
+      .upsert({ id: user.id, full_name: fullName, 
+                phone_number: phone, user_type: userType })
+    setLoading(false)
+    setMessage(error ? 'حدث خطأ / Error occurred' : 
+                       'تم الحفظ بنجاح / Saved successfully')
+    setTimeout(() => setMessage(''), 3000)
   }
 
-  const stats = [
-    { l: t("profile.sessions"), v: "24" },
-    { l: t("profile.reports"), v: "12" },
-    { l: t("profile.saved"), v: "8" },
-  ];
-
-  const careItems = [
-    { icon: HeartPulse, label: t("profile.medical"), sub: t("profile.conditions") },
-    { icon: ShieldCheck, label: t("profile.emergency"), sub: t("profile.3people") },
-    { icon: Accessibility, label: t("profile.accessibility"), sub: t("profile.signCaptions") },
-  ];
-
-  const prefItems = [
-    { icon: Globe, label: t("profile.language"), sub: isRTL ? t("profile.arabic") : t("profile.english"), onClick: () => setLang(isRTL ? "en" : "ar") },
-    { icon: GraduationCap, label: t("profile.showTutorial"), sub: t("profile.showTutorialSub"), onClick: openTutorial },
-    { icon: Bell, label: t("profile.notifications"), sub: t("profile.on") },
-  ];
-
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    navigate({ to: '/login' })
+  }
 
   return (
-    <MobileShell>
-      <div className="bg-gradient-brand text-primary-foreground rounded-b-[2rem] px-5 pt-12 pb-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-aurora opacity-40" />
-        <div className="relative flex items-center justify-between">
-          <h1 className="text-xl font-bold">{t("profile.title")}</h1>
-          <Link to="/login" className="size-10 rounded-full glass border border-white/20 flex items-center justify-center" aria-label={t("profile.settings")}><Settings className="size-5" /></Link>
-        </div>
-        <div className="relative mt-5 flex items-center gap-4">
-          <div className="relative">
-            <div className="size-20 rounded-3xl bg-white/20 border border-white/30 flex items-center justify-center text-2xl font-bold">L</div>
-            <span className="absolute -bottom-1 -right-1 size-6 rounded-full bg-success border-2 border-background flex items-center justify-center text-[10px] font-bold text-success-foreground">✓</span>
-          </div>
-          <div>
-            <p className="text-xl font-bold">{profile?.full_name || t("profile.name")}</p>
-            <p className="text-sm text-primary-foreground/80">{user?.email || t("profile.email")}</p>
-            <p className="text-xs text-primary-foreground/70 mt-0.5">{profile?.user_type === "pharmacist" ? "Pharmacist" : "Patient"}</p>
-          </div>
-        </div>
-        <div className="relative mt-5 grid grid-cols-3 gap-2">
-          {stats.map((s) => (
-            <div key={s.l} className="glass border border-white/20 rounded-2xl py-3 text-center">
-              <p className="text-lg font-bold">{s.v}</p>
-              <p className="text-[10px] uppercase tracking-widest opacity-80">{s.l}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div style={{ background: '#0D1B2A', minHeight: '100vh', 
+                  padding: '24px', color: '#FFFFEF' }}>
+      <h1 style={{ color: '#398BC4', fontSize: '24px', 
+                   marginBottom: '24px', textAlign: 'center' }}>
+        الملف الشخصي / Profile
+      </h1>
 
-      <section className="px-5 mt-6 space-y-6">
-        <div>
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{t("profile.care")}</h2>
-          <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
-            {careItems.map(({ icon: Icon, label, sub }, i) => (
-              <button key={label} className={`w-full flex items-center gap-3 p-4 text-left ${i > 0 ? "border-t border-border" : ""}`}>
-                <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
-                  <Icon className="size-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold">{label}</p>
-                  <p className="text-xs text-muted-foreground">{sub}</p>
-                </div>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </button>
-            ))}
-          </div>
+      <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ color: '#90CA90', display: 'block', 
+                          marginBottom: '6px' }}>
+            الاسم / Full Name
+          </label>
+          <input value={fullName} onChange={e => setFullName(e.target.value)}
+            style={{ width: '100%', padding: '12px', borderRadius: '8px',
+                     background: '#1A2A3A', border: '1px solid #398BC4',
+                     color: '#FFFFEF', fontSize: '16px', boxSizing: 'border-box' }}/>
         </div>
 
-        <div>
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{t("profile.preferences")}</h2>
-          <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
-            {prefItems.map(({ icon: Icon, label, sub, onClick }, i) => (
-              <button key={label} onClick={onClick} className={`w-full flex items-center gap-3 p-4 text-left ${i > 0 ? "border-t border-border" : ""}`}>
-                <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
-                  <Icon className="size-5" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold">{label}</p>
-                  <p className="text-xs text-muted-foreground">{sub}</p>
-                </div>
-                <ChevronRight className="size-4 text-muted-foreground" />
-              </button>
-            ))}
-          </div>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ color: '#90CA90', display: 'block', 
+                          marginBottom: '6px' }}>
+            البريد الإلكتروني / Email
+          </label>
+          <input value={user?.email || ''} disabled
+            style={{ width: '100%', padding: '12px', borderRadius: '8px',
+                     background: '#112233', border: '1px solid #334455',
+                     color: '#8899AA', fontSize: '16px', boxSizing: 'border-box' }}/>
         </div>
 
-        <div>
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-2 px-1">{t("profile.about")}</h2>
-          <div className="rounded-3xl bg-card border border-border overflow-hidden shadow-soft">
-            <Link to="/about" className="w-full flex items-center gap-3 p-4 text-left">
-              <div className="size-10 rounded-xl bg-secondary text-primary flex items-center justify-center">
-                <Info className="size-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold">{t("about.title")}</p>
-                <p className="text-xs text-muted-foreground">{t("about.subtitle")}</p>
-              </div>
-              <ChevronRight className="size-4 text-muted-foreground" />
-            </Link>
-          </div>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ color: '#90CA90', display: 'block', 
+                          marginBottom: '6px' }}>
+            رقم الهاتف / Phone Number
+          </label>
+          <input value={phone} onChange={e => setPhone(e.target.value)}
+            style={{ width: '100%', padding: '12px', borderRadius: '8px',
+                     background: '#1A2A3A', border: '1px solid #398BC4',
+                     color: '#FFFFEF', fontSize: '16px', boxSizing: 'border-box' }}/>
         </div>
 
-        <button onClick={handleSignOut} className="w-full rounded-2xl py-4 flex items-center justify-center gap-2 text-destructive font-semibold border border-destructive/30 bg-destructive/5">
-          <LogOut className="size-4" /> {t("profile.signout")}
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{ color: '#90CA90', display: 'block', 
+                          marginBottom: '6px' }}>
+            نوع المستخدم / User Type
+          </label>
+          <select value={userType} onChange={e => setUserType(e.target.value)}
+            style={{ width: '100%', padding: '12px', borderRadius: '8px',
+                     background: '#1A2A3A', border: '1px solid #398BC4',
+                     color: '#FFFFEF', fontSize: '16px' }}>
+            <option value="patient">مريض / Patient</option>
+            <option value="pharmacist">صيدلاني / Pharmacist</option>
+          </select>
+        </div>
+
+        {message && (
+          <div style={{ background: '#1A3A2A', border: '1px solid #90CA90',
+                        borderRadius: '8px', padding: '12px', 
+                        marginBottom: '16px', color: '#90CA90',
+                        textAlign: 'center' }}>
+            {message}
+          </div>
+        )}
+
+        <button onClick={handleSave} disabled={loading}
+          style={{ width: '100%', padding: '14px', borderRadius: '8px',
+                   background: '#3656BB', color: 'white', border: 'none',
+                   fontSize: '16px', cursor: 'pointer', marginBottom: '12px' }}>
+          {loading ? 'جاري الحفظ...' : 'حفظ / Save'}
         </button>
-      </section>
-    </MobileShell>
-  );
+
+        <button onClick={handleLogout}
+          style={{ width: '100%', padding: '14px', borderRadius: '8px',
+                   background: '#E74C3C', color: 'white', border: 'none',
+                   fontSize: '16px', cursor: 'pointer' }}>
+          تسجيل الخروج / Logout
+        </button>
+      </div>
+    </div>
+  )
 }
